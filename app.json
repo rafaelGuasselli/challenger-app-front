@@ -20,13 +20,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.mychallengersapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-
-    ]
+    "plugins": []
   }
 }
