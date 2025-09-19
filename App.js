@@ -7,19 +7,18 @@ import { StyleSheet, Text, View, TextInput, Button, ActivityIndicator } from 're
 import { signUp, signIn, signOut, getCurrentUser, fetchUserAttributes, fetchAuthSession } from "@aws-amplify/auth";
 
 
-const USER_POOL_ID = process.env.EXPO_PUBLIC_USER_POOL_ID ?? process.env.USER_POOL_ID;
-const USER_POOL_CLIENT_ID = process.env.EXPO_PUBLIC_USER_POOL_CLIENT_ID ?? process.env.USER_POOL_CLIENT_ID;
-const REGION = process.env.EXPO_PUBLIC_REGION ?? process.env.REGION;
+import { EXPO_PUBLIC_USER_POOL_ID, EXPO_PUBLIC_USER_POOL_CLIENT_ID } from "@env";	
+console.log({ EXPO_PUBLIC_USER_POOL_ID, EXPO_PUBLIC_USER_POOL_CLIENT_ID })
 
-
-if (!USER_POOL_ID || !USER_POOL_CLIENT_ID) {
+if (!EXPO_PUBLIC_USER_POOL_ID || !EXPO_PUBLIC_USER_POOL_CLIENT_ID) {
     console.warn('Amplify Auth env missing: check EXPO_PUBLIC_USER_POOL_ID and EXPO_PUBLIC_USER_POOL_CLIENT_ID');
 }
+
 Amplify.configure({
     Auth: {
         Cognito: {
-            userPoolId: USER_POOL_ID,
-            userPoolClientId: USER_POOL_CLIENT_ID,
+            userPoolId: EXPO_PUBLIC_USER_POOL_ID,
+            userPoolClientId: EXPO_PUBLIC_USER_POOL_CLIENT_ID,
             ...(REGION ? { region: REGION } : {}),
             loginWith: {
                 email: true

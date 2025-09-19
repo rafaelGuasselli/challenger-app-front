@@ -1,0 +1,8 @@
+REGION=sa-east-1
+USER_POOL_ID=sa-east-1_5fkumoUWm
+USER_POOL_CLIENT_ID=1dkj2jorvqp0c72ov1tsf50pce
+HTTP_API=https://c64d01ccgc.execute-api.sa-east-1.amazonaws.com
+
+# Expo public environment variables (available at runtime via process.env)
+EXPO_PUBLIC_USER_POOL_ID=sa-east-1_5fkumoUWm
+EXPO_PUBLIC_USER_POOL_CLIENT_ID=1dkj2jorvqp0c72ov1tsf50pce
