@@ -1,69 +1,95 @@
 import React, { useState } from 'react';
-import { Button, TextField, Container, Typography, Box } from '@mui/material';
+import {
+	View,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	StyleSheet,
+	Alert,
+	KeyboardAvoidingView,
+	Platform,
+	ScrollView,
+} from 'react-native';
 
-const login = () => {
-  // Estados para e-mail and senha
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const Login = () => {
+	// Estados para e-mail and senha
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log({
-      email: email,
-      password: password,
-    });
-    alert('Login enviado! (Verifique o console)');
-  };
+	const handleSubmit = () => {
+		console.log({ email, password });
+		Alert.alert('Login', 'Login enviado! (Verifique o console)');
+	};
 
-  return (
-    <Container maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Typography component="h1" variant="h5">
-          Entrar
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="E-mail"
-            name="email"
-            type="email"
-            autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Senha"
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Entrar
-          </Button>
-        </Box>
-      </Box>
-    </Container>
-  );
+	return (
+		<KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.select({ ios: 'padding', android: undefined })}>
+			<ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+				<Text style={styles.title}>Entrar</Text>
+				<View style={styles.form}>
+					<TextInput
+						style={styles.input}
+						placeholder="E-mail"
+						value={email}
+						onChangeText={setEmail}
+						keyboardType="email-address"
+						autoCapitalize="none"
+						returnKeyType="next"
+					/>
+					<TextInput
+						style={styles.input}
+						placeholder="Senha"
+						value={password}
+						onChangeText={setPassword}
+						secureTextEntry
+						returnKeyType="done"
+					/>
+					<TouchableOpacity style={styles.button} onPress={handleSubmit}>
+						<Text style={styles.buttonText}>Entrar</Text>
+					</TouchableOpacity>
+				</View>
+			</ScrollView>
+		</KeyboardAvoidingView>
+	);
 };
 
-export default login;
+export default Login;
+
+const styles = StyleSheet.create({
+	container: {
+		flexGrow: 1,
+		padding: 24,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#fff',
+	},
+	title: {
+		fontSize: 22,
+		fontWeight: '600',
+		marginBottom: 16,
+	},
+	form: {
+		width: '100%',
+		maxWidth: 400,
+	},
+	input: {
+		borderWidth: 1,
+		borderColor: '#ccc',
+		borderRadius: 8,
+		paddingHorizontal: 12,
+		paddingVertical: 10,
+		marginVertical: 6,
+		backgroundColor: '#fff',
+	},
+	button: {
+		marginTop: 12,
+		backgroundColor: '#1976d2',
+		borderRadius: 8,
+		paddingVertical: 12,
+		alignItems: 'center',
+	},
+	buttonText: {
+		color: '#fff',
+		fontWeight: '600',
+		fontSize: 16,
+	},
+});

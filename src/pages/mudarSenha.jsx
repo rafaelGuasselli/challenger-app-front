@@ -1,33 +1,94 @@
 import React, { useState } from 'react';
-import { Button, TextField, Container, Typography, Box } from '@mui/material';
+import {
+	View,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	StyleSheet,
+	Alert,
+	KeyboardAvoidingView,
+	Platform,
+	ScrollView,
+} from 'react-native';
 
-const mudarSenha = () => {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+const MudarSenha = () => {
+	const [currentPassword, setCurrentPassword] = useState('');
+	const [newPassword, setNewPassword] = useState('');
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log('Mudança de senha solicitada');
-    // Aqui viria a lógica para chamar a API de mudança de senha
-    alert('Função de mudar senha ainda não implementada.');
-  };
+	const handleSubmit = () => {
+		console.log('Mudança de senha solicitada');
+		// Aqui viria a lógica para chamar a API de mudança de senha
+		Alert.alert('Info', 'Função de mudar senha ainda não implementada.');
+	};
 
-  return (
-    <Container maxWidth="xs">
-      <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography component="h1" variant="h5">
-          Mudar Senha
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-          <TextField margin="normal" required fullWidth name="currentPassword" label="Senha Atual" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
-          <TextField margin="normal" required fullWidth name="newPassword" label="Nova Senha" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-            Salvar Nova Senha
-          </Button>
-        </Box>
-      </Box>
-    </Container>
-  );
+	return (
+		<KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.select({ ios: 'padding', android: undefined })}>
+			<ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+				<Text style={styles.title}>Mudar Senha</Text>
+				<View style={styles.form}>
+					<TextInput
+						style={styles.input}
+						placeholder="Senha Atual"
+						value={currentPassword}
+						onChangeText={setCurrentPassword}
+						secureTextEntry
+						returnKeyType="next"
+					/>
+					<TextInput
+						style={styles.input}
+						placeholder="Nova Senha"
+						value={newPassword}
+						onChangeText={setNewPassword}
+						secureTextEntry
+						returnKeyType="done"
+					/>
+					<TouchableOpacity style={styles.button} onPress={handleSubmit}>
+						<Text style={styles.buttonText}>Salvar Nova Senha</Text>
+					</TouchableOpacity>
+				</View>
+			</ScrollView>
+		</KeyboardAvoidingView>
+	);
 };
 
-export default mudarSenha;
+export default MudarSenha;
+
+const styles = StyleSheet.create({
+	container: {
+		flexGrow: 1,
+		padding: 24,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#fff',
+	},
+	title: {
+		fontSize: 22,
+		fontWeight: '600',
+		marginBottom: 16,
+	},
+	form: {
+		width: '100%',
+		maxWidth: 400,
+	},
+	input: {
+		borderWidth: 1,
+		borderColor: '#ccc',
+		borderRadius: 8,
+		paddingHorizontal: 12,
+		paddingVertical: 10,
+		marginVertical: 6,
+		backgroundColor: '#fff',
+	},
+	button: {
+		marginTop: 12,
+		backgroundColor: '#1976d2',
+		borderRadius: 8,
+		paddingVertical: 12,
+		alignItems: 'center',
+	},
+	buttonText: {
+		color: '#fff',
+		fontWeight: '600',
+		fontSize: 16,
+	},
+});
