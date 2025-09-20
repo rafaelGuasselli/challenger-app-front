@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { registerUser } from '../services/authService';
 
-const Cadastro = () => {
+const Cadastro = ({ signUp: signUpInjected, navigation }) => {
 	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -21,10 +21,24 @@ const Cadastro = () => {
 		const userData = { name, email, password };
 
 		try {
-			const data = await registerUser(userData);
-			console.log('Usuário cadastrado com sucesso:', data);
+			if (typeof signUpInjected === 'function') {
+				const result = await signUpInjected({
+					username: email,
+					password,
+					options: {
+						userAttributes: {
+							email,
+							name,
+						},
+					},
+				});
+				console.log('Amplify signUp result:', result);
+			} else {
+				const data = await registerUser(userData);
+				console.log('Usuário cadastrado com sucesso:', data);
+			}
 			Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-			// TODO: redirecionar o usuário para a tela de login
+			navigation && navigation.navigate('Login');
 		} catch (error) {
 			console.error('Erro no cadastro:', error);
 			Alert.alert('Erro', 'Falha no cadastro. Verifique os dados e tente novamente.');
@@ -114,4 +128,3 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 	},
 });
-

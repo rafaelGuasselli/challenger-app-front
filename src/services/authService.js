@@ -103,7 +103,7 @@ export const authService = new AuthService(amplifyAuthMethods);
  * @param {{ email: string, password: string }} params
  */
 export async function loginUser({ email, password }) {
-  return authService.login(email, password);
+	return authService.login(email, password);
 }
 
 /**
@@ -111,26 +111,26 @@ export async function loginUser({ email, password }) {
  * @param {{ name?: string, email: string, password: string }} params
  */
 export async function registerUser({ name, email, password }) {
-  return authService.register(email, password, { email, name });
+	return authService.register(email, password, { email, name });
 }
 
 /**
  * Get current user wrapper.
  */
 export async function getCurrentUser() {
-  return authService.getCurrentUser();
+	return authService.getCurrentUser();
 }
 
 /**
  * Get current session wrapper.
  */
 export async function getSession() {
-  return authService.getSession();
+	return authService.getSession();
 }
 
 /**
  * Get user attributes wrapper.
  */
 export async function getUserAttributes() {
-  return authService.getUserAttributes();
+	return authService.getUserAttributes();
 }
