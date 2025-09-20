@@ -1,49 +1,136 @@
-// O endereço base da sua API que o time de back-end vai te passar
-const API_URL = 'http://localhost:3001/api/usuarios'; // Exemplo! Usem o endereço real aqui.
+import { Amplify } from 'aws-amplify';
+import * as amplifyAuthMethods from 'aws-amplify/auth';
+import Config from "../env/public.config";
 
-// Função para CADASTRAR um usuário
-export const registerUser = async (userData) => {
-  try {
-    const response = await fetch(`${API_URL}/cadastro`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData), // userData deve ser um objeto { name, email, password }
-    });
+Amplify.configure(Config.Amplify);
+/**
+ * @typedef {Object} AuthProvider
+ * @property {(args: { username: string, password: string, options?: { authFlowType?: string } }) => Promise<any>} signIn - Sign in with username and password.
+ * @property {() => Promise<any>} signOut - Sign out the current user.
+ * @property {(args: { username: string, password: string, options?: { userAttributes?: Record<string, any> } }) => Promise<any>} signUp - Register a new user.
+ */
 
-    if (!response.ok) {
-      // Se o back-end retornar um erro (ex: e-mail já existe), ele cairá aqui
-      throw new Error('Erro ao cadastrar usuário');
-    }
+/**
+ * Authentication service that wraps the underlying provider (e.g., AWS Amplify Auth).
+ */
+class AuthService {
+	/**
+	 * @param {AuthProvider} provider Authentication provider compatible with Amplify.
+	 */
+	constructor(provider) {
+		this.provider = provider;
+	}
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Falha na requisição de cadastro:', error);
-    throw error;
-  }
-};
+	/**
+	 * Sign in with username and password.
+	 * @param {string} username Email or username.
+	 * @param {string} password User password.
+	 * @returns {Promise<any>} Provider result (e.g., session or challenge).
+	 */
+	async login(username, password) {
+		return await this.provider.signIn({
+			username,
+			password,
+			options: {
+				authFlowType: 'USER_PASSWORD_AUTH',
+			},
+		});
+	}
 
-// Função para LOGAR um usuário
-export const loginUser = async (credentials) => {
-  try {
-    const response = await fetch(`${API_URL}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials), // credentials deve ser um objeto { email, password }
-    });
+	/**
+	 * Sign out the authenticated user.
+	 * @returns {Promise<any>} Provider result.
+	 */
+	async logout() {
+		return await this.provider.signOut();
+	}
 
-    if (!response.ok) {
-      throw new Error('Credenciais inválidas');
-    }
+	/**
+	 * Register a new user.
+	 * @param {string} username Email or username.
+	 * @param {string} password User password.
+	 * @param {Record<string, any>} userAttributes User attributes (e.g., email, name).
+	 * @returns {Promise<any>} Provider result (e.g., confirmation state).
+	 */
+	async register(username, password, userAttributes) {
+		return await this.provider.signUp({
+			username,
+			password,
+			options: {
+				userAttributes,
+			},
+		});
+	}
 
-    const data = await response.json();
-    return data; // Geralmente o back-end retorna um "token" aqui
-  } catch (error) {
-    console.error('Falha na requisição de login:', error);
-    throw error;
-  }
-};
+	/**
+	 * Get the currently authenticated user.
+	 * @returns {Promise<any>} Current user info or throws if not signed in.
+	 */
+	async getCurrentUser() {
+		return await this.provider.getCurrentUser();
+	}
+
+	/**
+	 * Get the current auth session (tokens, identity, etc.).
+	 * @returns {Promise<any>} Auth session information.
+	 */
+	async getSession() {
+		return await this.provider.fetchAuthSession();
+	}
+
+	/**
+	 * Fetch attributes for the current user (e.g., email, name).
+	 * @returns {Promise<Record<string, any>>} Key-value map of user attributes.
+	 */
+	async getUserAttributes() {
+		if (typeof this.provider.fetchUserAttributes === 'function') {
+			return await this.provider.fetchUserAttributes();
+		}
+		throw new Error('fetchUserAttributes is not available on the provider');
+	}
+}
+
+
+/**
+ * Singleton instance of the auth service configured with Amplify.
+ * @type {AuthService}
+ */
+export const authService = new AuthService(amplifyAuthMethods);
+
+// Convenience named exports to keep existing imports working and provide easy access.
+/**
+ * Sign in wrapper.
+ * @param {{ email: string, password: string }} params
+ */
+export async function loginUser({ email, password }) {
+  return authService.login(email, password);
+}
+
+/**
+ * Sign up wrapper.
+ * @param {{ name?: string, email: string, password: string }} params
+ */
+export async function registerUser({ name, email, password }) {
+  return authService.register(email, password, { email, name });
+}
+
+/**
+ * Get current user wrapper.
+ */
+export async function getCurrentUser() {
+  return authService.getCurrentUser();
+}
+
+/**
+ * Get current session wrapper.
+ */
+export async function getSession() {
+  return authService.getSession();
+}
+
+/**
+ * Get user attributes wrapper.
+ */
+export async function getUserAttributes() {
+  return authService.getUserAttributes();
+}
