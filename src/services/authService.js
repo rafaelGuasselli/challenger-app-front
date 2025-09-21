@@ -6,7 +6,10 @@ import Config from "../../env/public.config";
 Amplify.configure(Config.Amplify);
 
 // Dev logging helper (verbose logs only in development)
-const __IS_DEV__ = (typeof __DEV__ !== "undefined" ? __DEV__ : (process.env && process.env.NODE_ENV !== "production"));
+const __IS_DEV__ =
+  typeof __DEV__ !== "undefined"
+    ? __DEV__
+    : process.env && process.env.NODE_ENV !== "production";
 function devLog(...args) {
   if (__IS_DEV__) {
     // eslint-disable-next-line no-console
@@ -28,18 +31,24 @@ const SENSITIVE_KEYS = new Set([
 ]);
 
 function sanitizeForLog(value, depth = 0) {
-  if (!__IS_DEV__) return undefined; // avoid work in prod (function still present)
+  if (!__IS_DEV__) return undefined;
   if (value == null) return value;
-  if (depth > 3) return "[Object]"; // limit depth
+  if (depth > 3) return "[Object]";
   const t = typeof value;
   if (t === "string" || t === "number" || t === "boolean") return value;
-  if (value instanceof Error) return { name: value.name, message: value.message, stack: value.stack };
-  if (Array.isArray(value)) return value.map((v) => sanitizeForLog(v, depth + 1));
+  if (value instanceof Error)
+    return { name: value.name, message: value.message, stack: value.stack };
+  if (Array.isArray(value))
+    return value.map((v) => sanitizeForLog(v, depth + 1));
   if (t === "object") {
     const out = {};
     for (const [k, v] of Object.entries(value)) {
       const lowered = k.toLowerCase();
-      if (SENSITIVE_KEYS.has(k) || lowered.includes("token") || lowered.includes("password")) {
+      if (
+        SENSITIVE_KEYS.has(k) ||
+        lowered.includes("token") ||
+        lowered.includes("password")
+      ) {
         out[k] = "[REDACTED]";
       } else {
         out[k] = sanitizeForLog(v, depth + 1);
@@ -79,13 +88,14 @@ class AuthService {
    */
   async login(username, password) {
     devLog("login called for", username);
-    return await this.provider.signIn({
-      username,
-      password,
-      options: {
-        authFlowType: "USER_PASSWORD_AUTH",
-      },
-    })
+    return await this.provider
+      .signIn({
+        username,
+        password,
+        options: {
+          authFlowType: "USER_PASSWORD_AUTH",
+        },
+      })
       .then((res) => {
         devLog("login succeeded for", username, "result:", sanitizeForLog(res));
         return res;
@@ -121,15 +131,21 @@ class AuthService {
    */
   async register(username, password, userAttributes) {
     devLog("register called for", username);
-    return await this.provider.signUp({
-      username,
-      password,
-      options: {
-        userAttributes,
-      },
-    })
+    return await this.provider
+      .signUp({
+        username,
+        password,
+        options: {
+          userAttributes,
+        },
+      })
       .then((res) => {
-        devLog("register succeeded for", username, "result:", sanitizeForLog(res));
+        devLog(
+          "register succeeded for",
+          username,
+          "result:",
+          sanitizeForLog(res),
+        );
         return res;
       })
       .catch((err) => {
@@ -216,7 +232,10 @@ class AuthService {
     if (typeof this.provider.updatePassword === "function") {
       devLog("updatePassword called (passwords not logged)");
       try {
-        const res = await this.provider.updatePassword({ oldPassword, newPassword });
+        const res = await this.provider.updatePassword({
+          oldPassword,
+          newPassword,
+        });
         devLog("updatePassword succeeded", "result:", sanitizeForLog(res));
         return res;
       } catch (err) {

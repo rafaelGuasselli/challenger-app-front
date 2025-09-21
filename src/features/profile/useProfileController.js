@@ -1,5 +1,5 @@
-import { useCallback, useState } from "react";
-import { authService } from "../../services/authService";
+import { useCallback, useEffect, useState } from "react";
+import { authService, getCurrentUser, getUserAttributes } from "../../services/authService";
 
 export function useProfileController() {
   const [openPwdDialog, setOpenPwdDialog] = useState(false);
@@ -7,13 +7,33 @@ export function useProfileController() {
   const [newPassword, setNewPassword] = useState("");
   const [savingPwd, setSavingPwd] = useState(false);
 
+  const [user, setUser] = useState({ name: "", username: "", avatarUrl: "" });
+
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const [cu, attrs] = await Promise.all([
+          getCurrentUser().catch(() => null),
+          getUserAttributes().catch(() => ({})),
+        ]);
+        if (!mounted) return;
+        const username = cu?.username || cu?.signInDetails?.loginId || "";
+        const name = attrs?.name || attrs?.given_name || "";
+        setUser((prev) => ({ ...prev, name, username }));
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const updatePassword = useCallback(async () => {
-    if (typeof authService.updatePassword !== "function") {
-      throw new Error("updatePassword not implemented");
-    }
     setSavingPwd(true);
     try {
       const resp = await authService.updatePassword({
@@ -38,6 +58,7 @@ export function useProfileController() {
 
   return {
     // state
+    user,
     openPwdDialog,
     setOpenPwdDialog,
     oldPassword,

@@ -9,7 +9,9 @@ const Cadastro = () => {
   const navigation = useNavigation();
   const { fetchI18nText: t } = useI18n();
   const { name, setName, email, setEmail, password, setPassword, submit } =
-    useCadastroController();
+    useCadastroController({
+      onAuthenticated: () => navigation.replace("Home"),
+    });
 
   const handleSubmit = async () => {
     try {

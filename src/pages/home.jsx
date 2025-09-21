@@ -6,7 +6,7 @@ import { useHomeController } from "../features/home/useHomeController";
 
 const Home = ({ navigation }) => {
   const { fetchI18nText: t } = useI18n();
-  const { userName, signOut, deleteAccount } = useHomeController({
+  const { userName, signOut } = useHomeController({
     onUnauthenticated: () =>
       navigation.reset({ index: 0, routes: [{ name: "Login" }] }),
   });
@@ -20,31 +20,8 @@ const Home = ({ navigation }) => {
     }
   };
 
-  const handleDeleteAccountPress = () => {
-    Alert.alert(
-      t("home.deleteConfirmTitle"),
-      t("home.deleteConfirmMsg"),
-      [
-        { text: t("home.deleteConfirmNo"), style: "cancel" },
-        {
-          text: t("home.deleteConfirmYes"),
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteAccount();
-              Alert.alert(
-                t("home.deleteSuccessTitle"),
-                t("home.deleteSuccessMsg"),
-              );
-              // Navigation handled by Amplify 'userDeleted'/'signedOut' events via controller
-            } catch (err) {
-              Alert.alert(t("common.errorTitle"), t("home.deleteErrorMsg"));
-            }
-          },
-        },
-      ],
-      { cancelable: true },
-    );
+  const handleProfilePress = () => {
+    navigation.navigate("Profile");
   };
 
   return (
@@ -52,7 +29,7 @@ const Home = ({ navigation }) => {
       t={t}
       userName={userName}
       onPressSignOut={handleSignOutPress}
-      onPressDeleteAccount={handleDeleteAccountPress}
+      onPressProfile={handleProfilePress}
     />
   );
 };

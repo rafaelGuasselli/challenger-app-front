@@ -9,6 +9,7 @@ const Profile = ({ user = { name: "", avatarUrl: "" } }) => {
   const navigation = useNavigation();
   const { fetchI18nText: t } = useI18n();
   const {
+    user: profileUser,
     openPwdDialog,
     setOpenPwdDialog,
     oldPassword,
@@ -59,7 +60,7 @@ const Profile = ({ user = { name: "", avatarUrl: "" } }) => {
   return (
     <ProfileView
       t={t}
-      user={user}
+      user={{ ...user, ...profileUser }}
       openPwdDialog={openPwdDialog}
       onOpenPwdDialog={() => setOpenPwdDialog(true)}
       onClosePwdDialog={() => setOpenPwdDialog(false)}

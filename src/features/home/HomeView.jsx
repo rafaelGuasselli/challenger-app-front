@@ -5,7 +5,7 @@ export default function HomeView({
   t,
   userName,
   onPressSignOut,
-  onPressDeleteAccount,
+  onPressProfile,
 }) {
   return (
     <View style={styles.container}>
@@ -19,10 +19,10 @@ export default function HomeView({
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: "#d32f2f" }]}
-          onPress={onPressDeleteAccount}
+          style={[styles.button, { backgroundColor: "#1976d2" }]}
+          onPress={onPressProfile}
         >
-          <Text style={styles.buttonText}>{t("home.deleteAccount")}</Text>
+          <Text style={styles.buttonText}>{t("home.profileButton")}</Text>
         </TouchableOpacity>
       </View>
     </View>

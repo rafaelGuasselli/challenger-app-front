@@ -1,10 +1,22 @@
-import { useCallback, useState } from "react";
-import { registerUser } from "../../services/authService";
+import { useCallback, useEffect, useState } from "react";
+import { registerUser, getCurrentUser } from "../../services/authService";
 
-export function useCadastroController() {
+export function useCadastroController({ onAuthenticated } = {}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+    getCurrentUser()
+      .then(() => {
+        if (mounted && onAuthenticated) onAuthenticated();
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
+  }, [onAuthenticated]);
 
   const submit = useCallback(async () => {
     const userData = { name, email, password };

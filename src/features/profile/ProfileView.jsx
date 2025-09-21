@@ -12,7 +12,7 @@ import {
 
 export default function ProfileView({
   t,
-  user = { name: "", avatarUrl: "" },
+  user = { name: "", username: "", avatarUrl: "" },
   // password modal
   openPwdDialog,
   onOpenPwdDialog,
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     fontWeight: "600",
-    marginBottom: 20,
+    marginBottom: 30,
   },
   actions: {
     flexDirection: "row",
@@ -210,6 +210,7 @@ const styles = StyleSheet.create({
   modalActions: {
     flexDirection: "row",
     justifyContent: "flex-end",
+    alignItems: "center",
     marginTop: 16,
   },
   cancelText: {
