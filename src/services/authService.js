@@ -4,6 +4,51 @@ import * as amplifyAuthMethods from "aws-amplify/auth";
 import Config from "../../env/public.config";
 
 Amplify.configure(Config.Amplify);
+
+// Dev logging helper (verbose logs only in development)
+const __IS_DEV__ = (typeof __DEV__ !== "undefined" ? __DEV__ : (process.env && process.env.NODE_ENV !== "production"));
+function devLog(...args) {
+  if (__IS_DEV__) {
+    // eslint-disable-next-line no-console
+    console.log("[AuthService]", ...args);
+  }
+}
+
+// Redact sensitive fields before logging
+const SENSITIVE_KEYS = new Set([
+  "password",
+  "oldPassword",
+  "newPassword",
+  "token",
+  "idToken",
+  "accessToken",
+  "refreshToken",
+  "jwtToken",
+  "secret",
+]);
+
+function sanitizeForLog(value, depth = 0) {
+  if (!__IS_DEV__) return undefined; // avoid work in prod (function still present)
+  if (value == null) return value;
+  if (depth > 3) return "[Object]"; // limit depth
+  const t = typeof value;
+  if (t === "string" || t === "number" || t === "boolean") return value;
+  if (value instanceof Error) return { name: value.name, message: value.message, stack: value.stack };
+  if (Array.isArray(value)) return value.map((v) => sanitizeForLog(v, depth + 1));
+  if (t === "object") {
+    const out = {};
+    for (const [k, v] of Object.entries(value)) {
+      const lowered = k.toLowerCase();
+      if (SENSITIVE_KEYS.has(k) || lowered.includes("token") || lowered.includes("password")) {
+        out[k] = "[REDACTED]";
+      } else {
+        out[k] = sanitizeForLog(v, depth + 1);
+      }
+    }
+    return out;
+  }
+  return String(value);
+}
 /**
  * @typedef {Object} AuthProvider
  * @property {(args: { username: string, password: string, options?: { authFlowType?: string } }) => Promise<any>} signIn - Sign in with username and password.
@@ -23,6 +68,7 @@ class AuthService {
     this._authSubscribers = new Set(); // generic subscribers (all events)
     this._authSubscribersByEvent = new Map(); // eventName => Set<cb>
     this._hubUnsubscribe = null;
+    devLog("Initialized with provider methods:", Object.keys(provider || {}));
   }
 
   /**
@@ -32,13 +78,22 @@ class AuthService {
    * @returns {Promise<any>} Provider result (e.g., session or challenge).
    */
   async login(username, password) {
+    devLog("login called for", username);
     return await this.provider.signIn({
       username,
       password,
       options: {
         authFlowType: "USER_PASSWORD_AUTH",
       },
-    });
+    })
+      .then((res) => {
+        devLog("login succeeded for", username, "result:", sanitizeForLog(res));
+        return res;
+      })
+      .catch((err) => {
+        devLog("login failed for", username, err?.message || err);
+        throw err;
+      });
   }
 
   /**
@@ -46,7 +101,15 @@ class AuthService {
    * @returns {Promise<any>} Provider result.
    */
   async logout() {
-    return await this.provider.signOut();
+    devLog("logout called");
+    try {
+      const res = await this.provider.signOut();
+      devLog("logout succeeded", "result:", sanitizeForLog(res));
+      return res;
+    } catch (err) {
+      devLog("logout failed", err?.message || err);
+      throw err;
+    }
   }
 
   /**
@@ -57,13 +120,22 @@ class AuthService {
    * @returns {Promise<any>} Provider result (e.g., confirmation state).
    */
   async register(username, password, userAttributes) {
+    devLog("register called for", username);
     return await this.provider.signUp({
       username,
       password,
       options: {
         userAttributes,
       },
-    });
+    })
+      .then((res) => {
+        devLog("register succeeded for", username, "result:", sanitizeForLog(res));
+        return res;
+      })
+      .catch((err) => {
+        devLog("register failed for", username, err?.message || err);
+        throw err;
+      });
   }
 
   /**
@@ -71,7 +143,15 @@ class AuthService {
    * @returns {Promise<any>} Current user info or throws if not signed in.
    */
   async getCurrentUser() {
-    return await this.provider.getCurrentUser();
+    devLog("getCurrentUser called");
+    try {
+      const res = await this.provider.getCurrentUser();
+      devLog("getCurrentUser succeeded", "result:", sanitizeForLog(res));
+      return res;
+    } catch (err) {
+      devLog("getCurrentUser failed", err?.message || err);
+      throw err;
+    }
   }
 
   /**
@@ -79,7 +159,15 @@ class AuthService {
    * @returns {Promise<any>} Auth session information.
    */
   async getSession() {
-    return await this.provider.fetchAuthSession();
+    devLog("getSession called");
+    try {
+      const res = await this.provider.fetchAuthSession();
+      devLog("getSession succeeded", "result:", sanitizeForLog(res));
+      return res;
+    } catch (err) {
+      devLog("getSession failed", err?.message || err);
+      throw err;
+    }
   }
 
   /**
@@ -88,7 +176,15 @@ class AuthService {
    */
   async getUserAttributes() {
     if (typeof this.provider.fetchUserAttributes === "function") {
-      return await this.provider.fetchUserAttributes();
+      devLog("getUserAttributes called");
+      try {
+        const res = await this.provider.fetchUserAttributes();
+        devLog("getUserAttributes succeeded", "result:", sanitizeForLog(res));
+        return res;
+      } catch (err) {
+        devLog("getUserAttributes failed", err?.message || err);
+        throw err;
+      }
     }
     throw new Error("fetchUserAttributes is not available on the provider");
   }
@@ -99,16 +195,45 @@ class AuthService {
    */
   async deleteCurrentUser() {
     if (typeof this.provider.deleteUser === "function") {
-      return await this.provider.deleteUser();
+      devLog("deleteCurrentUser called");
+      try {
+        const res = await this.provider.deleteUser();
+        devLog("deleteCurrentUser succeeded", "result:", sanitizeForLog(res));
+        return res;
+      } catch (err) {
+        devLog("deleteCurrentUser failed", err?.message || err);
+        throw err;
+      }
     }
     throw new Error("deleteUser is not available on the provider");
+  }
+
+  /**
+   * Update the current user's password.
+   * @param {{ oldPassword: string, newPassword: string }} params
+   */
+  async updatePassword({ oldPassword, newPassword }) {
+    if (typeof this.provider.updatePassword === "function") {
+      devLog("updatePassword called (passwords not logged)");
+      try {
+        const res = await this.provider.updatePassword({ oldPassword, newPassword });
+        devLog("updatePassword succeeded", "result:", sanitizeForLog(res));
+        return res;
+      } catch (err) {
+        devLog("updatePassword failed", err?.message || err);
+        throw err;
+      }
+    }
+    throw new Error("updatePassword is not available on the provider");
   }
 
   /** Initialize a single global Amplify Hub listener for auth events. */
   initAuthListeners() {
     if (this._hubUnsubscribe) return; // already initialized
+    devLog("Initializing Hub auth listener");
     this._hubUnsubscribe = Hub.listen("auth", ({ payload }) => {
       const { event, data } = payload || {};
+      devLog("Auth event:", event, "data:", sanitizeForLog(data));
       // Notify event-specific subscribers first
       const eventSet = this._authSubscribersByEvent.get(event);
       if (eventSet) {
@@ -137,6 +262,7 @@ class AuthService {
     if (typeof eventOrCb === "string" && typeof maybeCb === "function") {
       const eventName = eventOrCb;
       const cb = maybeCb;
+      devLog("subscribeAuth add for event:", eventName);
       let set = this._authSubscribersByEvent.get(eventName);
       if (!set) {
         set = new Set();
@@ -144,6 +270,7 @@ class AuthService {
       }
       set.add(cb);
       return () => {
+        devLog("subscribeAuth remove for event:", eventName);
         const s = this._authSubscribersByEvent.get(eventName);
         if (s) {
           s.delete(cb);
@@ -153,8 +280,12 @@ class AuthService {
     }
     if (typeof eventOrCb === "function" && maybeCb === undefined) {
       const cb = eventOrCb;
+      devLog("subscribeAuth add (generic)");
       this._authSubscribers.add(cb);
-      return () => this._authSubscribers.delete(cb);
+      return () => {
+        devLog("subscribeAuth remove (generic)");
+        this._authSubscribers.delete(cb);
+      };
     }
     throw new Error("subscribeAuth requires (eventName, cb) or (cb)");
   }
