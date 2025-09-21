@@ -13,22 +13,18 @@ const Login = ({ signIn: signInInjected }) => {
 	const [password, setPassword] = useState('');
 	const [showGooglePopup, setShowGooglePopup] = useState(false);
 
-	// 🔑 Login normal
-	const handleSubmit = async () => {
-		try {
-			if (typeof signInInjected === 'function') {
-				const result = await signInInjected({ username: email, password, options: { authFlowType: 'USER_PASSWORD_AUTH' } });
-				console.log("Amplify signIn result:", result);
-			} else {
-				const data = await loginUser({ email, password });
-				console.log("Login bem-sucedido:", data);
-			}
-			Alert.alert('Sucesso', 'Login realizado!');
-		} catch (err) {
-			console.error("Erro no login:", err);
-			Alert.alert('Erro', 'Falha no login. Verifique suas credenciais.');
-		}
-	};
+  // 🔑 Login normal
+  const handleSubmit = async () => {
+    try {
+      const data = await loginUser({ email, password });
+      console.log("Login bem-sucedido:", data);
+      Alert.alert('Sucesso', 'Login realizado!');
+      navigation.navigate('Home', { user: data });
+    } catch (err) {
+      console.error("Erro no login:", err);
+      Alert.alert('Erro', 'Falha no login. Verifique suas credenciais.');
+    }
+  };
 
 	// 🔑 OAuth real (quando backend estiver pronto)
 	const handleGoogleOAuth = async () => {

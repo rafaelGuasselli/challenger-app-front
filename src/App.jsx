@@ -9,7 +9,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Login from './pages/login';
 import Cadastro from './pages/cadastro';
-import DeletarConta from './pages/deletarConta';
+import Home from './pages/home';
+import Profile from './pages/profile';
 
 
 const Stack = createNativeStackNavigator();
@@ -17,13 +18,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" options={{ title: "Entrar" }}>
-          {(props) => <Login {...props} signIn={signIn} />}
-        </Stack.Screen>
-        <Stack.Screen name="Cadastro" options={{ title: "Criar Conta" }}>
-          {(props) => <Cadastro {...props} signUp={signUp} />}
-        </Stack.Screen>
-        <Stack.Screen name="DeletarConta" component={DeletarConta} options={{ title: "Deletar Conta" }} />
+        <Stack.Screen name="Login" component={Login} options={{ title: "Entrar" }} />
+        <Stack.Screen name="Cadastro" component={Cadastro} options={{ title: "Criar Conta" }} />
+        <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
+        <Stack.Screen name="Profile" component={Profile} options={{ title: "Perfil" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
