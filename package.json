@@ -10,9 +10,6 @@
   },
   "dependencies": {
     "@aws-amplify/react-native": "^1.1.10",
-    "@aws-amplify/ui-react": "^6.12.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/material": "^7.3.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/netinfo": "^11.4.1",
     "@react-navigation/native": "^7.1.17",
