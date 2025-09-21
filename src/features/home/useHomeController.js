@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { getUserAttributes, logoutUser, deleteCurrentUser, authService } from "../../services/authService";
+import {
+  getUserAttributes,
+  logoutUser,
+  deleteCurrentUser,
+  authService,
+} from "../../services/authService";
 
 export function useHomeController({ onUnauthenticated } = {}) {
   const [userName, setUserName] = useState("");

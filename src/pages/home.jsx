@@ -30,17 +30,17 @@ const Home = ({ navigation }) => {
           text: t("home.deleteConfirmYes"),
           style: "destructive",
           onPress: async () => {
-              try {
-                await deleteAccount();
-                Alert.alert(
-                  t("home.deleteSuccessTitle"),
-                  t("home.deleteSuccessMsg"),
-                );
+            try {
+              await deleteAccount();
+              Alert.alert(
+                t("home.deleteSuccessTitle"),
+                t("home.deleteSuccessMsg"),
+              );
               // Navigation handled by Amplify 'userDeleted'/'signedOut' events via controller
-              } catch (err) {
-                Alert.alert(t("common.errorTitle"), t("home.deleteErrorMsg"));
-              }
-            },
+            } catch (err) {
+              Alert.alert(t("common.errorTitle"), t("home.deleteErrorMsg"));
+            }
+          },
         },
       ],
       { cancelable: true },
