@@ -33,6 +33,16 @@ function Login({ navigation }) {
 	const [showGooglePopup, setShowGooglePopup] = useState(false);
     const { fetchI18nText } = useI18n();
 
+	const openGooglePopup = () => setShowGooglePopup(true);
+	const closeGooglePopup = () => setShowGooglePopup(false);
+
+	const handleAccountSelected = (acc) => {
+		console.log("Usuário escolheu:", acc.email);
+		// 🚀 aqui é só trocar pelo handleGoogleOAuth quando o backend estiver pronto
+		// handleGoogleOAuth();
+		closeGooglePopup();
+	};
+
 	// Redirect if already logged in
 	getCurrentUser()
 		.then(() => {
@@ -94,7 +104,7 @@ function Login({ navigation }) {
 				<Text style={styles.divider}>{fetchI18nText('common.or')}</Text>
 
 				{/* Botão Google */}
-				<Pressable style={styles.googleButton} onPress={() => setShowGooglePopup(true)}>
+				<Pressable style={styles.googleButton} onPress={openGooglePopup}>
 					<Image
 						source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" }}
 						style={styles.googleIcon}
@@ -120,31 +130,16 @@ function Login({ navigation }) {
 							</Text>
 
 							{mockAccounts.map((acc) => (
-								<Pressable
-									key={acc.id}
-									style={styles.accountItem}
-									onPress={() => {
-										console.log("Usuário escolheu:", acc.email);
-										// 🚀 aqui é só trocar pelo handleGoogleOAuth quando o backend estiver pronto
-										// handleGoogleOAuth();
-										setShowGooglePopup(false);
-									}}
-								>
-									<Image source={{ uri: acc.avatar }} style={styles.avatar} />
-									<View>
-										<Text style={styles.accountName}>{acc.name}</Text>
-										<Text style={styles.accountEmail}>{acc.email}</Text>
-									</View>
-								</Pressable>
+								<AccountItem key={acc.id} acc={acc} onSelect={handleAccountSelected} />
 							))}
 
-							<Pressable style={styles.accountItem} onPress={() => setShowGooglePopup(false)}>
+							<Pressable style={styles.accountItem} onPress={closeGooglePopup}>
 								<Image source={{ uri: "https://img.icons8.com/material-outlined/24/000000/user.png" }} style={styles.avatar} />
 								<Text style={styles.accountName}>{fetchI18nText('login.useAnotherAccount')}</Text>
 							</Pressable>
 						</ScrollView>
 
-							<Button title={fetchI18nText('common.close')} onPress={() => setShowGooglePopup(false)} />
+								<Button title={fetchI18nText('common.close')} onPress={closeGooglePopup} />
 					</View>
 				</Modal>
 			</ScrollView>
@@ -153,6 +148,19 @@ function Login({ navigation }) {
 };
 
 export default Login;
+
+function AccountItem({ acc, onSelect }) {
+	const handlePress = () => onSelect(acc);
+	return (
+		<Pressable style={styles.accountItem} onPress={handlePress}>
+			<Image source={{ uri: acc.avatar }} style={styles.avatar} />
+			<View>
+				<Text style={styles.accountName}>{acc.name}</Text>
+				<Text style={styles.accountEmail}>{acc.email}</Text>
+			</View>
+		</Pressable>
+	);
+}
 
 const styles = StyleSheet.create({
 	container: { flexGrow: 1, padding: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },

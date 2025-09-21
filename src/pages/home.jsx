@@ -6,6 +6,39 @@ import { useI18n } from '../i18n';
 const Home = ({ navigation }) => {
   	const [userName, setUserName] = useState('');
     const { fetchI18nText } = useI18n();
+
+	const handleSignOut = async () => {
+		try {
+			await logoutUser();
+			navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+		} catch (err) {
+			console.log('Erro ao sair:', err);
+			Alert.alert(fetchI18nText('common.errorTitle'), fetchI18nText('home.signOutErrorMsg'));
+		}
+	};
+
+	const performDeleteAccount = async () => {
+		try {
+			await deleteCurrentUser();
+			Alert.alert(fetchI18nText('home.deleteSuccessTitle'), fetchI18nText('home.deleteSuccessMsg'));
+			navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+		} catch (err) {
+			console.log('Erro ao apagar conta:', err);
+			Alert.alert(fetchI18nText('common.errorTitle'), fetchI18nText('home.deleteErrorMsg'));
+		}
+	};
+
+	const handleConfirmDelete = () => {
+		Alert.alert(
+			fetchI18nText('home.deleteConfirmTitle'),
+			fetchI18nText('home.deleteConfirmMsg'),
+			[
+				{ text: fetchI18nText('home.deleteConfirmNo'), style: 'cancel' },
+				{ text: fetchI18nText('home.deleteConfirmYes'), style: 'destructive', onPress: performDeleteAccount },
+			],
+			{ cancelable: true }
+		);
+	};
 	
 	getUserAttributes().then(attr=>{
 		setUserName(attr.name);
@@ -31,48 +64,11 @@ const Home = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>{fetchI18nText('home.welcome', { userName })}</Text>
       <View style={styles.actions}>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: '#1976d2' }]}
-          onPress={async () => {
-            try {
-              await logoutUser();
-              navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
-            } catch (err) {
-              console.log('Erro ao sair:', err);
-              Alert.alert(fetchI18nText('common.errorTitle'), fetchI18nText('home.signOutErrorMsg'));
-            }
-          }}
-        >
+        <TouchableOpacity style={[styles.button, { backgroundColor: '#1976d2' }]} onPress={handleSignOut}>
           <Text style={styles.buttonText}>{fetchI18nText('home.signOut')}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: '#d32f2f' }]}
-          onPress={() => {
-            Alert.alert(
-              fetchI18nText('home.deleteConfirmTitle'),
-              fetchI18nText('home.deleteConfirmMsg'),
-              [
-                { text: fetchI18nText('home.deleteConfirmNo'), style: 'cancel' },
-                {
-                  text: fetchI18nText('home.deleteConfirmYes'),
-                  style: 'destructive',
-                  onPress: async () => {
-                    try {
-                      await deleteCurrentUser();
-                      Alert.alert(fetchI18nText('home.deleteSuccessTitle'), fetchI18nText('home.deleteSuccessMsg'));
-                      navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
-                    } catch (err) {
-                      console.log('Erro ao apagar conta:', err);
-                      Alert.alert(fetchI18nText('common.errorTitle'), fetchI18nText('home.deleteErrorMsg'));
-                    }
-                  },
-                },
-              ],
-              { cancelable: true }
-            );
-          }}
-        >
+        <TouchableOpacity style={[styles.button, { backgroundColor: '#d32f2f' }]} onPress={handleConfirmDelete}>
           <Text style={styles.buttonText}>{fetchI18nText('home.deleteAccount')}</Text>
         </TouchableOpacity>
       </View>
@@ -80,17 +76,17 @@ const Home = ({ navigation }) => {
   );
 };
 
-export const homeOptions = ({ navigation }) => ({
-  title: 'Home',
-  headerRight: () => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate('Profile')}
-      style={{ marginRight: 16 }}
-    >
-      <Text style={{ color: '#1976d2', fontWeight: '600' }}>Perfil</Text>
-    </TouchableOpacity>
-  ),
-});
+export const homeOptions = ({ navigation }) => {
+  const handleGoToProfile = () => navigation.navigate('Profile');
+  return {
+    title: 'Home',
+    headerRight: () => (
+      <TouchableOpacity onPress={handleGoToProfile} style={{ marginRight: 16 }}>
+        <Text style={{ color: '#1976d2', fontWeight: '600' }}>Perfil</Text>
+      </TouchableOpacity>
+    ),
+  };
+};
 
 export default Home;
 

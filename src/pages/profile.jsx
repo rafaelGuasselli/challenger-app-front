@@ -26,6 +26,11 @@ const Profile = ({ user = { name: '', avatarUrl: '' } }) => {
   const navigation = useNavigation();
   const { fetchI18nText } = useI18n();
 
+  const handleOpenPwdDialog = () => setOpenPwdDialog(true);
+  const handleClosePwdDialog = () => setOpenPwdDialog(false);
+  const handleOpenDeleteDialog = () => setOpenDeleteDialog(true);
+  const handleCloseDeleteDialog = () => setOpenDeleteDialog(false);
+
   const handleSavePassword = async () => {
     if (savingPwd) return;
     setSavingPwd(true);
@@ -85,13 +90,13 @@ const Profile = ({ user = { name: '', avatarUrl: '' } }) => {
 
       {/* Botões */}
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.button} onPress={() => setOpenPwdDialog(true)}>
+        <TouchableOpacity style={styles.button} onPress={handleOpenPwdDialog}>
           <Text style={styles.buttonText}>{fetchI18nText('profile.resetPassword')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.deleteButton]}
-          onPress={() => setOpenDeleteDialog(true)}
+          onPress={handleOpenDeleteDialog}
         >
           <Text style={styles.deleteButtonText}>{fetchI18nText('profile.deleteAccount')}</Text>
         </TouchableOpacity>
@@ -117,7 +122,7 @@ const Profile = ({ user = { name: '', avatarUrl: '' } }) => {
               onChangeText={setNewPassword}
             />
             <View style={styles.modalActions}>
-              <TouchableOpacity onPress={() => setOpenPwdDialog(false)}>
+              <TouchableOpacity onPress={handleClosePwdDialog}>
                 <Text style={styles.cancelText}>{fetchI18nText('common.cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.saveButton} onPress={handleSavePassword} disabled={savingPwd}>
@@ -141,7 +146,7 @@ const Profile = ({ user = { name: '', avatarUrl: '' } }) => {
               {fetchI18nText('profile.deleteQuestion')}
             </Text>
             <View style={styles.modalActions}>
-              <TouchableOpacity onPress={() => setOpenDeleteDialog(false)}>
+              <TouchableOpacity onPress={handleCloseDeleteDialog}>
                 <Text style={styles.cancelText}>{fetchI18nText('common.no')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
