@@ -35,6 +35,9 @@ export function useLoginController({ onAuthenticated } = {}) {
 
   const openGooglePopup = useCallback(() => setShowGooglePopup(true), []);
   const closeGooglePopup = useCallback(() => setShowGooglePopup(false), []);
+  const googleSignIn = useCallback(async () => {
+    await authService.signInWithGoogleRedirect();
+  }, []);
 
   return {
     email,
@@ -45,5 +48,6 @@ export function useLoginController({ onAuthenticated } = {}) {
     showGooglePopup,
     openGooglePopup,
     closeGooglePopup,
+    googleSignIn,
   };
 }

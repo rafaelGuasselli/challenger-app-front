@@ -1,3 +1,7 @@
+import "@aws-amplify/react-native";
+import "@aws-amplify/rtn-web-browser";
+
+
 import { Amplify } from "aws-amplify";
 import { Hub } from "aws-amplify/utils";
 import * as amplifyAuthMethods from "aws-amplify/auth";
@@ -244,6 +248,47 @@ class AuthService {
       }
     }
     throw new Error("updatePassword is not available on the provider");
+  }
+
+  /**
+   * Start Google sign-in using Cognito Hosted UI.
+   */
+  async signInWithGoogleRedirect() {
+    devLog("signInWithGoogleRedirect called");
+    try {
+      // Some providers require being signed out before redirect
+      try {
+        await this.provider.signOut?.();
+      } catch {}
+      if (typeof this.provider.signInWithRedirect === "function") {
+        return await this.provider.signInWithRedirect({ provider: "Google" });
+      }
+      if (typeof this.provider.federatedSignIn === "function") {
+        // Legacy fallback
+        return await this.provider.federatedSignIn({ provider: "Google" });
+      }
+      throw new Error("No compatible redirect method found for Google sign-in");
+    } catch (err) {
+      devLog("signInWithGoogleRedirect failed", err?.message || err);
+      throw err;
+    }
+  }
+
+  /**
+   * Complete OAuth redirect flow if current environment requires it (e.g., web).
+   */
+  async completeOAuthFlowIfPresent() {
+    try {
+      if (typeof this.provider.completeOAuthFlow === "function") {
+        devLog("completeOAuthFlowIfPresent: attempting completion");
+        const res = await this.provider.completeOAuthFlow();
+        devLog("completeOAuthFlowIfPresent: completed", sanitizeForLog(res));
+        return res;
+      }
+    } catch (err) {
+      devLog("completeOAuthFlowIfPresent failed", err?.message || err);
+    }
+    return undefined;
   }
 
   /** Initialize a single global Amplify Hub listener for auth events. */

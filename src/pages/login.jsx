@@ -13,7 +13,7 @@ function Login({ navigation }) {
     setPassword,
     submit,
     showGooglePopup,
-    openGooglePopup,
+    googleSignIn,
     closeGooglePopup,
   } = useLoginController({ onAuthenticated: () => navigation.replace("Home") });
 
@@ -41,7 +41,7 @@ function Login({ navigation }) {
       onSubmit={handleSubmit}
       onPressCadastrar={handleCadastrar}
       showGooglePopup={showGooglePopup}
-      onOpenGooglePopup={openGooglePopup}
+      onOpenGooglePopup={googleSignIn}
       onCloseGooglePopup={closeGooglePopup}
     />
   );

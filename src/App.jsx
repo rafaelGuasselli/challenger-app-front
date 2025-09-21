@@ -67,6 +67,8 @@ export default function App() {
   // Initialize centralized auth listener once
   useEffect(() => {
     authService.initAuthListeners();
+    // Complete OAuth redirect flows on web (no-op on native if unsupported)
+    authService.completeOAuthFlowIfPresent?.();
   }, []);
   return (
     <I18nProvider initialLang="pt">
