@@ -11,9 +11,10 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import authService from '../services/authService';
+import { useI18n } from '../i18n';
+import { authService } from '../services/authService';
 
-const Profile = ({ user = { name: 'Usuário Demo', avatarUrl: '' } }) => {
+const Profile = ({ user = { name: '', avatarUrl: '' } }) => {
   const [openPwdDialog, setOpenPwdDialog] = useState(false);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -23,6 +24,7 @@ const Profile = ({ user = { name: 'Usuário Demo', avatarUrl: '' } }) => {
   const [deleting, setDeleting] = useState(false);
 
   const navigation = useNavigation();
+  const { fetchI18nText } = useI18n();
 
   const handleSavePassword = async () => {
     if (savingPwd) return;
@@ -30,14 +32,14 @@ const Profile = ({ user = { name: 'Usuário Demo', avatarUrl: '' } }) => {
     try {
       const resp = await authService.updatePassword({ oldPassword, newPassword });
       if (resp && resp.success) {
-        Alert.alert('Sucesso', 'Senha atualizada com sucesso.');
+        Alert.alert(fetchI18nText('common.successTitle'), fetchI18nText('profile.passwordUpdated'));
         setOpenPwdDialog(false);
       } else {
-        Alert.alert('Erro', resp?.message || 'Falha ao atualizar senha');
+        Alert.alert(fetchI18nText('common.errorTitle'), resp?.message || fetchI18nText('profile.passwordUpdateError'));
       }
     } catch (err) {
       console.error('Erro ao atualizar senha:', err);
-      Alert.alert('Erro', 'Erro ao atualizar senha');
+      Alert.alert(fetchI18nText('common.errorTitle'), fetchI18nText('profile.passwordUpdateError'));
     } finally {
       setSavingPwd(false);
     }
@@ -47,23 +49,25 @@ const Profile = ({ user = { name: 'Usuário Demo', avatarUrl: '' } }) => {
     if (deleting) return;
     setDeleting(true);
     try {
-      const resp = await authService.deleteAccount();
+      const resp = await authService.deleteCurrentUser();
       if (resp && resp.success) {
-        Alert.alert('Sucesso', 'Conta excluída.');
+        Alert.alert(fetchI18nText('common.successTitle'), fetchI18nText('profile.accountDeleted'));
         setTimeout(() => {
           navigation.navigate('Login');
         }, 800);
       } else {
-        Alert.alert('Erro', 'Erro ao excluir conta');
+        Alert.alert(fetchI18nText('common.errorTitle'), fetchI18nText('profile.accountDeleteError'));
       }
     } catch (err) {
       console.error('Erro ao excluir conta:', err);
-      Alert.alert('Erro', 'Erro ao excluir conta');
+      Alert.alert(fetchI18nText('common.errorTitle'), fetchI18nText('profile.accountDeleteError'));
     } finally {
       setDeleting(false);
       setOpenDeleteDialog(false);
     }
   };
+
+  const displayName = user?.name || fetchI18nText('profile.demoUser');
 
   return (
     <View style={styles.container}>
@@ -72,24 +76,24 @@ const Profile = ({ user = { name: 'Usuário Demo', avatarUrl: '' } }) => {
         <Image source={{ uri: user.avatarUrl }} style={styles.avatar} />
       ) : (
         <View style={[styles.avatar, styles.avatarFallback]}>
-          <Text style={styles.avatarText}>{user.name ? user.name[0] : 'U'}</Text>
+          <Text style={styles.avatarText}>{displayName ? displayName[0] : 'U'}</Text>
         </View>
       )}
 
       {/* Nome */}
-      <Text style={styles.name}>{user.name}</Text>
+      <Text style={styles.name}>{displayName}</Text>
 
       {/* Botões */}
       <View style={styles.actions}>
         <TouchableOpacity style={styles.button} onPress={() => setOpenPwdDialog(true)}>
-          <Text style={styles.buttonText}>Reconfigurar senha</Text>
+          <Text style={styles.buttonText}>{fetchI18nText('profile.resetPassword')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.deleteButton]}
           onPress={() => setOpenDeleteDialog(true)}
         >
-          <Text style={styles.deleteButtonText}>Apagar conta</Text>
+          <Text style={styles.deleteButtonText}>{fetchI18nText('profile.deleteAccount')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -97,30 +101,30 @@ const Profile = ({ user = { name: 'Usuário Demo', avatarUrl: '' } }) => {
       <Modal visible={openPwdDialog} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Reconfigurar senha</Text>
+            <Text style={styles.modalTitle}>{fetchI18nText('profile.resetPassword')}</Text>
             <TextInput
               style={styles.input}
-              placeholder="Senha antiga"
+              placeholder={fetchI18nText('profile.oldPasswordPlaceholder')}
               secureTextEntry
               value={oldPassword}
               onChangeText={setOldPassword}
             />
             <TextInput
               style={styles.input}
-              placeholder="Nova senha"
+              placeholder={fetchI18nText('profile.newPasswordPlaceholder')}
               secureTextEntry
               value={newPassword}
               onChangeText={setNewPassword}
             />
             <View style={styles.modalActions}>
               <TouchableOpacity onPress={() => setOpenPwdDialog(false)}>
-                <Text style={styles.cancelText}>Cancelar</Text>
+                <Text style={styles.cancelText}>{fetchI18nText('common.cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.saveButton} onPress={handleSavePassword} disabled={savingPwd}>
                 {savingPwd ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text style={styles.saveButtonText}>Salvar</Text>
+                  <Text style={styles.saveButtonText}>{fetchI18nText('common.save')}</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -132,13 +136,13 @@ const Profile = ({ user = { name: 'Usuário Demo', avatarUrl: '' } }) => {
       <Modal visible={openDeleteDialog} animationType="fade" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Apagar conta</Text>
+            <Text style={styles.modalTitle}>{fetchI18nText('profile.deleteTitle')}</Text>
             <Text style={{ marginVertical: 12 }}>
-              Tem certeza que deseja excluir sua conta no Challengers App?
+              {fetchI18nText('profile.deleteQuestion')}
             </Text>
             <View style={styles.modalActions}>
               <TouchableOpacity onPress={() => setOpenDeleteDialog(false)}>
-                <Text style={styles.cancelText}>NÃO</Text>
+                <Text style={styles.cancelText}>{fetchI18nText('common.no')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.saveButton, { backgroundColor: 'red' }]}
@@ -148,7 +152,7 @@ const Profile = ({ user = { name: 'Usuário Demo', avatarUrl: '' } }) => {
                 {deleting ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text style={styles.saveButtonText}>SIM</Text>
+                  <Text style={styles.saveButtonText}>{fetchI18nText('common.yes')}</Text>
                 )}
               </TouchableOpacity>
             </View>

@@ -7,6 +7,7 @@ import {
 
 import { loginUser, getCurrentUser, logoutUser } from '../services/authService';
 import { signOut, signInWithRedirect } from "@aws-amplify/auth";
+import { useI18n } from '../i18n';
 
 
 const mockAccounts = [
@@ -30,6 +31,7 @@ function Login({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showGooglePopup, setShowGooglePopup] = useState(false);
+    const { fetchI18nText } = useI18n();
 
 	// Redirect if already logged in
 	getCurrentUser()
@@ -48,24 +50,24 @@ function Login({ navigation }) {
 		try {
 			const data = await loginUser({ email, password });
 			console.log("Login bem-sucedido:", data);
-			Alert.alert('Sucesso', 'Login realizado!');
+			Alert.alert(fetchI18nText('common.successTitle'), fetchI18nText('login.successMessage'));
 			navigation.replace('Home');
 		} catch (err) {
 			console.error("Erro no login:", err);
-			Alert.alert('Erro', 'Falha no login. Verifique suas credenciais.');
+			Alert.alert(fetchI18nText('common.errorTitle'), fetchI18nText('login.errorMessage'));
 		}
 	};
 
 	return (
 		<KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.select({ ios: 'padding', android: undefined })}>
 			<ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-				<Text style={styles.title}>Entrar</Text>
+				<Text style={styles.title}>{fetchI18nText('login.title')}</Text>
 
 				{/* Formulário de login */}
 				<View style={styles.form}>
 					<TextInput
 						style={styles.input}
-						placeholder="E-mail"
+						placeholder={fetchI18nText('login.emailPlaceholder')}
 						value={email}
 						onChangeText={setEmail}
 						keyboardType="email-address"
@@ -74,22 +76,22 @@ function Login({ navigation }) {
 					/>
 					<TextInput
 						style={styles.input}
-						placeholder="Senha"
+						placeholder={fetchI18nText('login.passwordPlaceholder')}
 						value={password}
 						onChangeText={setPassword}
 						secureTextEntry
 						returnKeyType="done"
 					/>
 					<TouchableOpacity style={styles.button} onPress={handleSubmit}>
-						<Text style={styles.buttonText}>Entrar</Text>
+						<Text style={styles.buttonText}>{fetchI18nText('login.signInButton')}</Text>
 					</TouchableOpacity>
 
 					<TouchableOpacity style={styles.button} onPress={handleCadastrar}>
-						<Text style={styles.buttonText}>Cadastrar</Text>
+						<Text style={styles.buttonText}>{fetchI18nText('login.registerButton')}</Text>
 					</TouchableOpacity>
 				</View>
 
-				<Text style={styles.divider}>ou</Text>
+				<Text style={styles.divider}>{fetchI18nText('common.or')}</Text>
 
 				{/* Botão Google */}
 				<Pressable style={styles.googleButton} onPress={() => setShowGooglePopup(true)}>
@@ -97,7 +99,7 @@ function Login({ navigation }) {
 						source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" }}
 						style={styles.googleIcon}
 					/>
-					<Text style={styles.googleText}>Continuar com Google</Text>
+					<Text style={styles.googleText}>{fetchI18nText('login.continueWithGoogle')}</Text>
 				</Pressable>
 
 				{/* Popup simulado */}
@@ -108,13 +110,13 @@ function Login({ navigation }) {
 								source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" }}
 								style={styles.logo}
 							/>
-							<Text style={styles.headerText}>Fazer login com o Google</Text>
+							<Text style={styles.headerText}>{fetchI18nText('login.googleHeader')}</Text>
 						</View>
 
 						<ScrollView contentContainerStyle={styles.content}>
-							<Text style={styles.modalTitle}>Escolha uma conta</Text>
+								<Text style={styles.modalTitle}>{fetchI18nText('login.chooseAccount')}</Text>
 							<Text style={styles.subtitle}>
-								para prosseguir para <Text style={styles.appName}>MeuApp</Text>
+									{fetchI18nText('login.proceedTo')} <Text style={styles.appName}>{fetchI18nText('appName')}</Text>
 							</Text>
 
 							{mockAccounts.map((acc) => (
@@ -138,11 +140,11 @@ function Login({ navigation }) {
 
 							<Pressable style={styles.accountItem} onPress={() => setShowGooglePopup(false)}>
 								<Image source={{ uri: "https://img.icons8.com/material-outlined/24/000000/user.png" }} style={styles.avatar} />
-								<Text style={styles.accountName}>Usar outra conta</Text>
+								<Text style={styles.accountName}>{fetchI18nText('login.useAnotherAccount')}</Text>
 							</Pressable>
 						</ScrollView>
 
-						<Button title="Fechar" onPress={() => setShowGooglePopup(false)} />
+							<Button title={fetchI18nText('common.close')} onPress={() => setShowGooglePopup(false)} />
 					</View>
 				</Modal>
 			</ScrollView>

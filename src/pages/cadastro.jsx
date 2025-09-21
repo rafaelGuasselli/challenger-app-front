@@ -12,9 +12,11 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // 👈 Hook do React Navigation
 import { registerUser } from '../services/authService';
+import { useI18n } from '../i18n';
 
 const Cadastro = () => {
 	const navigation = useNavigation(); // 👈 acesso ao navigation
+	const { fetchI18nText } = useI18n();
 	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -39,11 +41,11 @@ const Cadastro = () => {
 				const data = await registerUser(userData);
 				console.log('Usuário cadastrado com sucesso:', data);
 			}
-			Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+			Alert.alert(fetchI18nText('common.successTitle'), fetchI18nText('register.successMessage'));
 			navigation.navigate('Login');
 		} catch (error) {
 			console.error('Erro no cadastro:', error);
-			Alert.alert('Erro', 'Falha no cadastro. Verifique os dados e tente novamente.');
+			Alert.alert(fetchI18nText('common.errorTitle'), fetchI18nText('register.errorMessage'));
 		}
 	};
 
@@ -53,11 +55,11 @@ const Cadastro = () => {
 			behavior={Platform.select({ ios: 'padding', android: undefined })}
 		>
 			<ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-				<Text style={styles.title}>Criar Conta</Text>
+				<Text style={styles.title}>{fetchI18nText('register.title')}</Text>
 				<View style={styles.form}>
 					<TextInput
 						style={styles.input}
-						placeholder="Nome Completo"
+						placeholder={fetchI18nText('register.namePlaceholder')}
 						value={name}
 						onChangeText={setName}
 						autoCapitalize="words"
@@ -65,7 +67,7 @@ const Cadastro = () => {
 					/>
 					<TextInput
 						style={styles.input}
-						placeholder="E-mail"
+						placeholder={fetchI18nText('register.emailPlaceholder')}
 						value={email}
 						onChangeText={setEmail}
 						keyboardType="email-address"
@@ -74,14 +76,14 @@ const Cadastro = () => {
 					/>
 					<TextInput
 						style={styles.input}
-						placeholder="Senha"
+						placeholder={fetchI18nText('register.passwordPlaceholder')}
 						value={password}
 						onChangeText={setPassword}
 						secureTextEntry
 						returnKeyType="done"
 					/>
 					<TouchableOpacity style={styles.button} onPress={handleSubmit}>
-						<Text style={styles.buttonText}>Cadastrar</Text>
+						<Text style={styles.buttonText}>{fetchI18nText('register.submitButton')}</Text>
 					</TouchableOpacity>
 				</View>
 			</ScrollView>

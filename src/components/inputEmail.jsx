@@ -1,8 +1,12 @@
 import React from 'react';
 import { TextInput, StyleSheet, View, Text } from 'react-native';
+import { useI18n } from '../i18n';
 
 // Componente de input de e-mail reutilizável (React Native)
-const InputEmail = ({ value, onChange, onChangeText, label = 'E-mail', placeholder = 'E-mail' }) => {
+const InputEmail = ({ value, onChange, onChangeText, label, placeholder }) => {
+	const { fetchI18nText } = useI18n();
+	const resolvedLabel = label ?? fetchI18nText('login.emailPlaceholder');
+	const resolvedPlaceholder = placeholder ?? fetchI18nText('login.emailPlaceholder');
 	const handleChangeText = (text) => {
 		if (onChangeText) onChangeText(text);
 		if (onChange) onChange({ target: { value: text } });
@@ -10,10 +14,10 @@ const InputEmail = ({ value, onChange, onChangeText, label = 'E-mail', placehold
 
 	return (
 		<View style={styles.wrapper}>
-			{!!label && <Text style={styles.label}>{label}</Text>}
+			{!!resolvedLabel && <Text style={styles.label}>{resolvedLabel}</Text>}
 			<TextInput
 				style={styles.input}
-				placeholder={placeholder}
+				placeholder={resolvedPlaceholder}
 				value={value}
 				onChangeText={handleChangeText}
 				keyboardType="email-address"

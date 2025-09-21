@@ -103,7 +103,7 @@ class AuthService {
 
 
 /**
- * Singleton instance of the auth service configured with Amplify.
+ * Singleton instance of the auth service configured with Amplify./
  * @type {AuthService}
  */
 export const authService = new AuthService(amplifyAuthMethods);

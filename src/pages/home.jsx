@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { getCurrentUser, getSession, getUserAttributes, logoutUser, deleteCurrentUser } from '../services/authService';
+import { useI18n } from '../i18n';
 
 const Home = ({ navigation }) => {
   	const [userName, setUserName] = useState('');
+    const { fetchI18nText } = useI18n();
 	
 	getUserAttributes().then(attr=>{
 		setUserName(attr.name);
@@ -27,7 +29,7 @@ const Home = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bem-vindo ao Challengers APP {userName}!!!</Text>
+      <Text style={styles.title}>{fetchI18nText('home.welcome', { userName })}</Text>
       <View style={styles.actions}>
         <TouchableOpacity
           style={[styles.button, { backgroundColor: '#1976d2' }]}
@@ -37,32 +39,32 @@ const Home = ({ navigation }) => {
               navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
             } catch (err) {
               console.log('Erro ao sair:', err);
-              Alert.alert('Erro', 'Falha ao sair.');
+              Alert.alert(fetchI18nText('common.errorTitle'), fetchI18nText('home.signOutErrorMsg'));
             }
           }}
         >
-          <Text style={styles.buttonText}>Sair</Text>
+          <Text style={styles.buttonText}>{fetchI18nText('home.signOut')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.button, { backgroundColor: '#d32f2f' }]}
           onPress={() => {
             Alert.alert(
-              'Apagar conta',
-              'Tem certeza que deseja apagar sua conta? Esta ação é permanente.',
+              fetchI18nText('home.deleteConfirmTitle'),
+              fetchI18nText('home.deleteConfirmMsg'),
               [
-                { text: 'Cancelar', style: 'cancel' },
+                { text: fetchI18nText('home.deleteConfirmNo'), style: 'cancel' },
                 {
-                  text: 'Apagar',
+                  text: fetchI18nText('home.deleteConfirmYes'),
                   style: 'destructive',
                   onPress: async () => {
                     try {
                       await deleteCurrentUser();
-                      Alert.alert('Conta apagada', 'Sua conta foi excluída.');
+                      Alert.alert(fetchI18nText('home.deleteSuccessTitle'), fetchI18nText('home.deleteSuccessMsg'));
                       navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
                     } catch (err) {
                       console.log('Erro ao apagar conta:', err);
-                      Alert.alert('Erro', 'Não foi possível apagar a conta.');
+                      Alert.alert(fetchI18nText('common.errorTitle'), fetchI18nText('home.deleteErrorMsg'));
                     }
                   },
                 },
@@ -71,7 +73,7 @@ const Home = ({ navigation }) => {
             );
           }}
         >
-          <Text style={styles.buttonText}>Apagar conta</Text>
+          <Text style={styles.buttonText}>{fetchI18nText('home.deleteAccount')}</Text>
         </TouchableOpacity>
       </View>
     </View>
