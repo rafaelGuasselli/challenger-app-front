@@ -1,11 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  getUserAttributes,
-  getCurrentUser,
-  getSession,
-  logoutUser,
-  deleteCurrentUser,
-} from "../../services/authService";
+import { getUserAttributes, logoutUser, deleteCurrentUser, authService } from "../../services/authService";
 
 export function useHomeController({ onUnauthenticated } = {}) {
   const [userName, setUserName] = useState("");
@@ -17,16 +11,31 @@ export function useHomeController({ onUnauthenticated } = {}) {
       try {
         const attrs = await getUserAttributes();
         if (mounted) setUserName(attrs?.name || "");
-        await getCurrentUser();
-        await getSession();
       } catch (err) {
         if (onUnauthenticated) onUnauthenticated(err);
       } finally {
         if (mounted) setLoading(false);
       }
     })();
+
+    const offSignedOut = authService.subscribeAuth("signedOut", () => {
+      onUnauthenticated && onUnauthenticated();
+    });
+    const offUserDeleted = authService.subscribeAuth("userDeleted", () => {
+      onUnauthenticated && onUnauthenticated();
+    });
+    const offSignedIn = authService.subscribeAuth("signedIn", async () => {
+      try {
+        const attrs = await getUserAttributes();
+        if (mounted) setUserName(attrs?.name || "");
+      } catch {}
+    });
+
     return () => {
       mounted = false;
+      if (typeof offSignedOut === "function") offSignedOut();
+      if (typeof offUserDeleted === "function") offUserDeleted();
+      if (typeof offSignedIn === "function") offSignedIn();
     };
   }, [onUnauthenticated]);
 

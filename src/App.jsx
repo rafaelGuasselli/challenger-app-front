@@ -6,6 +6,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { I18nProvider, useI18n } from "./i18n";
 import { TouchableOpacity, Text } from "react-native";
+import React, { useEffect } from "react";
+import { authService } from "./services/authService";
 
 import Login from "./pages/login";
 import Cadastro from "./pages/cadastro";
@@ -62,6 +64,10 @@ function AppNavigator() {
 }
 
 export default function App() {
+  // Initialize centralized auth listener once
+  useEffect(() => {
+    authService.initAuthListeners();
+  }, []);
   return (
     <I18nProvider initialLang="pt">
       <AppNavigator />

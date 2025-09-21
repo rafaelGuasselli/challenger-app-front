@@ -25,7 +25,7 @@ function Login({ navigation }) {
     try {
       await submit();
       Alert.alert(t("common.successTitle"), t("login.successMessage"));
-      navigation.replace("Home");
+      // Navigation handled by Amplify 'signedIn' event in controller
     } catch (err) {
       Alert.alert(t("common.errorTitle"), t("login.errorMessage"));
     }

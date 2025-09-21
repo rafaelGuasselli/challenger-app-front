@@ -1,4 +1,5 @@
 import { Amplify } from "aws-amplify";
+import { Hub } from "aws-amplify/utils";
 import * as amplifyAuthMethods from "aws-amplify/auth";
 import Config from "../../env/public.config";
 
@@ -19,6 +20,9 @@ class AuthService {
    */
   constructor(provider) {
     this.provider = provider;
+    this._authSubscribers = new Set(); // generic subscribers (all events)
+    this._authSubscribersByEvent = new Map(); // eventName => Set<cb>
+    this._hubUnsubscribe = null;
   }
 
   /**
@@ -98,6 +102,61 @@ class AuthService {
       return await this.provider.deleteUser();
     }
     throw new Error("deleteUser is not available on the provider");
+  }
+
+  /** Initialize a single global Amplify Hub listener for auth events. */
+  initAuthListeners() {
+    if (this._hubUnsubscribe) return; // already initialized
+    this._hubUnsubscribe = Hub.listen("auth", ({ payload }) => {
+      const { event, data } = payload || {};
+      // Notify event-specific subscribers first
+      const eventSet = this._authSubscribersByEvent.get(event);
+      if (eventSet) {
+        for (const cb of eventSet) {
+          try {
+            cb({ event, data });
+          } catch (e) {
+            console.warn("Auth subscriber threw", e);
+          }
+        }
+      }
+      // Then notify generic subscribers
+      for (const cb of this._authSubscribers) {
+        try {
+          cb({ event, data });
+        } catch (e) {
+          console.warn("Auth subscriber threw", e);
+        }
+      }
+    });
+  }
+
+  /** Subscribe to centralized auth events. Returns an unsubscribe function. */
+  subscribeAuth(eventOrCb, maybeCb) {
+    // Overload: (eventName: string, cb: Function) or (cb: Function)
+    if (typeof eventOrCb === "string" && typeof maybeCb === "function") {
+      const eventName = eventOrCb;
+      const cb = maybeCb;
+      let set = this._authSubscribersByEvent.get(eventName);
+      if (!set) {
+        set = new Set();
+        this._authSubscribersByEvent.set(eventName, set);
+      }
+      set.add(cb);
+      return () => {
+        const s = this._authSubscribersByEvent.get(eventName);
+        if (s) {
+          s.delete(cb);
+          if (s.size === 0) this._authSubscribersByEvent.delete(eventName);
+        }
+      };
+    }
+    if (typeof eventOrCb === "function" && maybeCb === undefined) {
+      const cb = eventOrCb;
+      this._authSubscribers.add(cb);
+      return () => this._authSubscribers.delete(cb);
+    }
+    throw new Error("subscribeAuth requires (eventName, cb) or (cb)");
   }
 }
 

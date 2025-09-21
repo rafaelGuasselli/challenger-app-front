@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { loginUser, getCurrentUser } from "../../services/authService";
+import { loginUser, authService } from "../../services/authService";
 
 export function useLoginController({ onAuthenticated } = {}) {
   const [email, setEmail] = useState("");
@@ -7,15 +7,10 @@ export function useLoginController({ onAuthenticated } = {}) {
   const [showGooglePopup, setShowGooglePopup] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
-    getCurrentUser()
-      .then(() => {
-        if (mounted && onAuthenticated) onAuthenticated();
-      })
-      .catch(() => {});
-    return () => {
-      mounted = false;
-    };
+    const off = authService.subscribeAuth("signedIn", () => {
+      onAuthenticated && onAuthenticated();
+    });
+    return off;
   }, [onAuthenticated]);
 
   const submit = useCallback(async () => {

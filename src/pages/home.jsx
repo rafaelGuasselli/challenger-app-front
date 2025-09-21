@@ -7,13 +7,14 @@ import { useHomeController } from "../features/home/useHomeController";
 const Home = ({ navigation }) => {
   const { fetchI18nText: t } = useI18n();
   const { userName, signOut, deleteAccount } = useHomeController({
-    onUnauthenticated: () => navigation.navigate("Login"),
+    onUnauthenticated: () =>
+      navigation.reset({ index: 0, routes: [{ name: "Login" }] }),
   });
 
   const handleSignOutPress = async () => {
     try {
       await signOut();
-      navigation.reset({ index: 0, routes: [{ name: "Login" }] });
+      // Navigation handled by Amplify 'signedOut' event via controller
     } catch (err) {
       Alert.alert(t("common.errorTitle"), t("home.signOutErrorMsg"));
     }
@@ -29,17 +30,17 @@ const Home = ({ navigation }) => {
           text: t("home.deleteConfirmYes"),
           style: "destructive",
           onPress: async () => {
-            try {
-              await deleteAccount();
-              Alert.alert(
-                t("home.deleteSuccessTitle"),
-                t("home.deleteSuccessMsg"),
-              );
-              navigation.reset({ index: 0, routes: [{ name: "Login" }] });
-            } catch (err) {
-              Alert.alert(t("common.errorTitle"), t("home.deleteErrorMsg"));
-            }
-          },
+              try {
+                await deleteAccount();
+                Alert.alert(
+                  t("home.deleteSuccessTitle"),
+                  t("home.deleteSuccessMsg"),
+                );
+              // Navigation handled by Amplify 'userDeleted'/'signedOut' events via controller
+              } catch (err) {
+                Alert.alert(t("common.errorTitle"), t("home.deleteErrorMsg"));
+              }
+            },
         },
       ],
       { cancelable: true },

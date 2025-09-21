@@ -1,0 +1,34 @@
+{
+	"expo": {
+		"name": "challengers-app",
+		"slug": "mychallengers-app",
+		"version": "1.0.1",
+		"orientation": "portrait",
+		"icon": "./src/assets/icon512.png",
+		"userInterfaceStyle": "light",
+		"newArchEnabled": true,
+		"splash": {
+			"image": "./src/assets/icon512.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#ffffff"
+		},
+		"ios": {
+			"icon": "./src/assets/icon512.png",
+			"supportsTablet": true,
+			"bundleIdentifier": "com.anonymous.mychallengersapp"
+		},
+		"android": {
+			"icon": "./src/assets/icon512.png",
+			"adaptiveIcon": {
+				"foregroundImage": "./src/assets/icon512.png",
+				"backgroundColor": "#ffffff"
+			},
+			"edgeToEdgeEnabled": true,
+			"package": "com.anonymous.mychallengersapp"
+		},
+		"web": {
+			"favicon": "./src/assets/icon512.png"
+		},
+		"plugins": []
+	}
+}
