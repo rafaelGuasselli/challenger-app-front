@@ -9,8 +9,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Login from './pages/login';
 import Cadastro from './pages/cadastro';
-import DeletarConta from './pages/deletarConta';
 import Home from './pages/home';
+import Profile from './pages/profile';
 
 Amplify.configure(Config.Amplify);
 
@@ -22,6 +22,8 @@ export default function App() {
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={Login} options={{ title: "Entrar" }} />
         <Stack.Screen name="Cadastro" component={Cadastro} options={{ title: "Criar Conta" }} />
+        <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
+        <Stack.Screen name="Profile" component={Profile} options={{ title: "Perfil" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
