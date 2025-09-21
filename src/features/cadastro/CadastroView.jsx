@@ -1,0 +1,106 @@
+import React from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from "react-native";
+
+export default function CadastroView({
+  t,
+  name,
+  email,
+  password,
+  onChangeName,
+  onChangeEmail,
+  onChangePassword,
+  onSubmit,
+}) {
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.select({ ios: "padding", android: undefined })}
+    >
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text style={styles.title}>{t("register.title")}</Text>
+        <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            placeholder={t("register.namePlaceholder")}
+            value={name}
+            onChangeText={onChangeName}
+            autoCapitalize="words"
+            returnKeyType="next"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder={t("register.emailPlaceholder")}
+            value={email}
+            onChangeText={onChangeEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            returnKeyType="next"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder={t("register.passwordPlaceholder")}
+            value={password}
+            onChangeText={onChangePassword}
+            secureTextEntry
+            returnKeyType="done"
+          />
+          <TouchableOpacity style={styles.button} onPress={onSubmit}>
+            <Text style={styles.buttonText}>{t("register.submitButton")}</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    padding: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "600",
+    marginBottom: 16,
+  },
+  form: {
+    width: "100%",
+    maxWidth: 400,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginVertical: 6,
+    backgroundColor: "#fff",
+  },
+  button: {
+    marginTop: 12,
+    backgroundColor: "#1976d2",
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+});
