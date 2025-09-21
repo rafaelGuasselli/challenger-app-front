@@ -1,6 +1,6 @@
 import { Amplify } from 'aws-amplify';
 import * as amplifyAuthMethods from 'aws-amplify/auth';
-import Config from "../env/public.config";
+import Config from "../../env/public.config";
 
 Amplify.configure(Config.Amplify);
 /**
@@ -88,6 +88,17 @@ class AuthService {
 		}
 		throw new Error('fetchUserAttributes is not available on the provider');
 	}
+
+	/**
+	 * Permanently delete the currently authenticated user.
+	 * @returns {Promise<void>}
+	 */
+	async deleteCurrentUser() {
+		if (typeof this.provider.deleteUser === 'function') {
+			return await this.provider.deleteUser();
+		}
+		throw new Error('deleteUser is not available on the provider');
+	}
 }
 
 
@@ -104,6 +115,15 @@ export const authService = new AuthService(amplifyAuthMethods);
  */
 export async function loginUser({ email, password }) {
 	return authService.login(email, password);
+}
+
+// Convenience named exports to keep existing imports working and provide easy access.
+/**
+ * Sign in wrapper.
+ * @param {{ email: string, password: string }} params
+ */
+export async function logoutUser() {
+	return authService.logout();
 }
 
 /**
@@ -133,4 +153,11 @@ export async function getSession() {
  */
 export async function getUserAttributes() {
 	return authService.getUserAttributes();
+}
+
+/**
+ * Delete the currently authenticated user.
+ */
+export async function deleteCurrentUser() {
+	return authService.deleteCurrentUser();
 }

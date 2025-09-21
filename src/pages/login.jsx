@@ -5,42 +5,56 @@ import {
 	ScrollView, Pressable, Image, Modal, Button
 } from 'react-native';
 
-import { loginUser } from '../services/authService';
+import { loginUser, getCurrentUser, logoutUser } from '../services/authService';
 import { signOut, signInWithRedirect } from "@aws-amplify/auth";
 
-const Login = ({ signIn: signInInjected }) => {
+
+const mockAccounts = [
+	{ id: 1, name: "Felipe Rocha", email: "felipematorocha@gmail.com", avatar: "https://i.pravatar.cc/100?img=3" },
+	{ id: 2, name: "Felipe Rocha", email: "fmrocha@gmail.com", avatar: "https://i.pravatar.cc/100?img=5" },
+];
+
+
+const handleGoogleOAuth = async () => {
+	try {
+		await signOut();
+		await signInWithRedirect({ provider: "Google" });
+	} catch (err) {
+		console.error("Erro no OAuth Google:", err);
+	}
+};
+
+
+
+function Login({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showGooglePopup, setShowGooglePopup] = useState(false);
 
-  // 🔑 Login normal
-  const handleSubmit = async () => {
-    try {
-      const data = await loginUser({ email, password });
-      console.log("Login bem-sucedido:", data);
-      Alert.alert('Sucesso', 'Login realizado!');
-      navigation.navigate('Home', { user: data });
-    } catch (err) {
-      console.error("Erro no login:", err);
-      Alert.alert('Erro', 'Falha no login. Verifique suas credenciais.');
-    }
-  };
+	// Redirect if already logged in
+	getCurrentUser()
+		.then(() => {
+			navigation.replace('Home');
+		})
+		.catch((err) => console.log(err));
 
-	// 🔑 OAuth real (quando backend estiver pronto)
-	const handleGoogleOAuth = async () => {
-		try {
-			await signOut();
-			await signInWithRedirect({ provider: "Google" });
-		} catch (err) {
-			console.error("Erro no OAuth Google:", err);
-		}
+
+	const handleCadastrar = ()=>{
+		navigation.navigate("Cadastro");
 	};
 
-	// Mock de contas Google
-	const mockAccounts = [
-		{ id: 1, name: "Felipe Rocha", email: "felipematorocha@gmail.com", avatar: "https://i.pravatar.cc/100?img=3" },
-		{ id: 2, name: "Felipe Rocha", email: "fmrocha@gmail.com", avatar: "https://i.pravatar.cc/100?img=5" },
-	];
+
+	const handleSubmit = async () => {
+		try {
+			const data = await loginUser({ email, password });
+			console.log("Login bem-sucedido:", data);
+			Alert.alert('Sucesso', 'Login realizado!');
+			navigation.replace('Home');
+		} catch (err) {
+			console.error("Erro no login:", err);
+			Alert.alert('Erro', 'Falha no login. Verifique suas credenciais.');
+		}
+	};
 
 	return (
 		<KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.select({ ios: 'padding', android: undefined })}>
@@ -68,6 +82,10 @@ const Login = ({ signIn: signInInjected }) => {
 					/>
 					<TouchableOpacity style={styles.button} onPress={handleSubmit}>
 						<Text style={styles.buttonText}>Entrar</Text>
+					</TouchableOpacity>
+
+					<TouchableOpacity style={styles.button} onPress={handleCadastrar}>
+						<Text style={styles.buttonText}>Cadastrar</Text>
 					</TouchableOpacity>
 				</View>
 

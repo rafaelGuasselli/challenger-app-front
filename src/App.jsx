@@ -20,7 +20,11 @@ export default function App() {
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={Login} options={{ title: "Entrar" }} />
         <Stack.Screen name="Cadastro" component={Cadastro} options={{ title: "Criar Conta" }} />
-        <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{ title: "Home", headerBackVisible: false, gestureEnabled: false }}
+        />
         <Stack.Screen name="Profile" component={Profile} options={{ title: "Perfil" }} />
       </Stack.Navigator>
     </NavigationContainer>
