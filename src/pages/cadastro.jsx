@@ -10,9 +10,11 @@ import {
 	Platform,
 	ScrollView,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // 👈 Hook do React Navigation
 import { registerUser } from '../services/authService';
 
 const Cadastro = () => {
+	const navigation = useNavigation(); // 👈 acesso ao navigation
 	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -24,7 +26,7 @@ const Cadastro = () => {
 			const data = await registerUser(userData);
 			console.log('Usuário cadastrado com sucesso:', data);
 			Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-			// TODO: redirecionar o usuário para a tela de login
+			navigation.navigate('Login');
 		} catch (error) {
 			console.error('Erro no cadastro:', error);
 			Alert.alert('Erro', 'Falha no cadastro. Verifique os dados e tente novamente.');
@@ -114,4 +116,3 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 	},
 });
-

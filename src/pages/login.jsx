@@ -1,4 +1,3 @@
-// src/pages/login.jsx
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
@@ -20,6 +19,7 @@ const Login = () => {
       const data = await loginUser({ email, password });
       console.log("Login bem-sucedido:", data);
       Alert.alert('Sucesso', 'Login realizado!');
+      navigation.navigate('Home', { user: data });
     } catch (err) {
       console.error("Erro no login:", err);
       Alert.alert('Erro', 'Falha no login. Verifique suas credenciais.');
