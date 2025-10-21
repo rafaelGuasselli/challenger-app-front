@@ -1,28 +1,29 @@
-import { useCallback, useEffect, useState } from "react";
-import { registerUser, getCurrentUser } from "../../services/authService";
+import { useCallback, useState } from "react";
+// Assumindo que o authService exporta uma função que chama o signUp do Amplify
+import { registerUser } from "../../services/authService";
 
-export function useCadastroController({ onAuthenticated } = {}) {
+// O hook gerencia o estado e a chamada à API.
+// A tela (Cadastro.jsx) cuidará da navegação e dos alertas.
+export function useCadastroController() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    let mounted = true;
-    getCurrentUser()
-      .then(() => {
-        if (mounted && onAuthenticated) onAuthenticated();
-      })
-      .catch(() => {});
-    return () => {
-      mounted = false;
-    };
-  }, [onAuthenticated]);
+  // A tela de cadastro não precisa saber se já existe uma sessão ativa.
 
-  const submit = useCallback(async () => {
-    const userData = { name, email, password };
-    const data = await registerUser(userData);
-    return data;
+  const submitSignUp = useCallback(async () => {
+    try {
+      const userData = { name, email, password };
+      // A função registerUser no seu authService deve chamar o signUp do Amplify
+      // e retornar o resultado ou lançar um erro.
+      const data = await registerUser(userData);
+      return data; // Retorna o resultado do Amplify (ex: nextStep) para a tela
+    } catch (error) {
+      // Re-lança o erro para que o componente da tela possa capturá-lo
+      throw error;
+    }
   }, [name, email, password]);
 
-  return { name, setName, email, setEmail, password, setPassword, submit };
+  // Retorna os estados, os setters e a função de submissão
+  return { name, setName, email, setEmail, password, setPassword, submitSignUp };
 }
