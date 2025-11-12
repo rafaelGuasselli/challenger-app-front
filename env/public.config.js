@@ -7,16 +7,13 @@ export default {
         loginWith: {
 			email: true,
 			oauth: {
-			  // Cognito Hosted UI domain WITHOUT protocol
-			  // Example: "your-domain.auth.sa-east-1.amazoncognito.com"
 			  domain: "https://challengers-app.auth.sa-east-1.amazoncognito.com",
 			  scopes: ["openid", "email", "profile"],
 			  redirectSignIn: [
-				"myapp://"
+				"mychallengersapp://"
 			  ],
-	
 			  redirectSignOut: [
-				"myapp://"
+				"mychallengersapp://"
 			  ],
 	
 			  responseType: "code",
