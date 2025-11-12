@@ -1,4 +1,5 @@
 export default {
+  production: false,
   Amplify: {
     Auth: {
       Cognito: {

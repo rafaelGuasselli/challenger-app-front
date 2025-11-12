@@ -1,24 +1,23 @@
 import "@aws-amplify/react-native";
 import "@aws-amplify/rtn-web-browser";
 
-
 import { Amplify } from "aws-amplify";
 import { Hub } from "aws-amplify/utils";
 import * as amplifyAuthMethods from "aws-amplify/auth";
 import Config from "../../env/public.config";
+import mockAuthProvider from "./mockAuthService";
 
-Amplify.configure(Config.Amplify);
-
-// Dev logging helper (verbose logs only in development)
-const __IS_DEV__ =
-  typeof __DEV__ !== "undefined"
-    ? __DEV__
-    : process.env && process.env.NODE_ENV !== "production";
+const __IS_DEV__ = !Config.production;
 function devLog(...args) {
   if (__IS_DEV__) {
-    // eslint-disable-next-line no-console
     console.log("[AuthService]", ...args);
   }
+}
+
+if (!__IS_DEV__) {
+  Amplify.configure(Config.Amplify);
+} else {
+  devLog("Mock auth provider enabled; skipping Amplify.configure");
 }
 
 // Redact sensitive fields before logging
@@ -355,11 +354,13 @@ class AuthService {
   }
 }
 
+const authProvider = __IS_DEV__ ? mockAuthProvider : amplifyAuthMethods;
+
 /**
- * Singleton instance of the auth service configured with Amplify./
+ * Singleton instance of the auth service configured with Amplify or the mock provider.
  * @type {AuthService}
  */
-export const authService = new AuthService(amplifyAuthMethods);
+export const authService = new AuthService(authProvider);
 
 // Convenience named exports to keep existing imports working and provide easy access.
 /**
