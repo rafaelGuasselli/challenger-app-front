@@ -5,7 +5,7 @@ import { Amplify } from "aws-amplify";
 import { Hub } from "aws-amplify/utils";
 import * as amplifyAuthMethods from "aws-amplify/auth";
 import Config from "../../env/public.config";
-import mockAuthProvider from "./mockAuthService";
+import mockAuthProvider from "./mockAuthProvider";
 
 const __IS_DEV__ = !Config.production;
 function devLog(...args) {
