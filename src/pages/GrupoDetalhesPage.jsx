@@ -8,8 +8,8 @@ import { useGrupoDetalhesController } from "../features/grupo/useGrupoDetalhesCo
 export default function GrupoDetalhesPage() {
   const { t } = useI18n();
   const route = useRoute();
-  // Pega o ID do grupo passado pela navegação
-  const { groupId } = route.params;
+  const { groupData } = route.params;
+  const groupId = groupData.id;
 
   // 1. Chama o hook com a lógica
   const { handleDelete, isDeleting, deleteError } =
@@ -39,9 +39,10 @@ export default function GrupoDetalhesPage() {
   return (
     <GrupoDetalhesView
       t={t}
+      groupData={groupData} 
       isDeleting={isDeleting}
       deleteError={deleteError}
-      onDeletePress={handleConfirmDelete} // Passa o handler de confirmação
+      onDeletePress={handleConfirmDelete}
     />
   );
 }

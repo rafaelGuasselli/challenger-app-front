@@ -34,7 +34,7 @@ export default function CriarGrupoPage() {
         t("createGroup.successMessage") || "Grupo criado com sucesso!"
       );
       // Navega para a página do novo grupo
-      navigation.navigate("GrupoDetalhes", { groupId: newGroup.id });
+      navigation.navigate("GrupoDetalhes", { groupData: newGroup });
     }
     // Se der erro, o 'error' state será atualizado pelo hook
     // e a View irá exibi-lo automaticamente.

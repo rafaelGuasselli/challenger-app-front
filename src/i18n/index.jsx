@@ -60,6 +60,7 @@ const translations = {
       deleteErrorMsg: "Could not delete the account.",
       signOutErrorMsg: "Failed to sign out.",
       profileButton: "Profile",
+      createGroupButton: "Create Group",
     },
     profile: {
       resetPassword: "Reset password",
@@ -75,6 +76,14 @@ const translations = {
       passwordUpdateError: "Error updating password",
       accountDeleted: "Account deleted.",
       accountDeleteError: "Error deleting account",
+    },
+    createGroup: {
+      title: "Create New Group",
+      namePlaceholder: "Group Name",
+      descriptionPlaceholder: "Description (optional)",
+      privateLabel: "Private Group",
+      submitButton: "Create Group",
+      successMessage: "Group created successfully!",
     },
   },
   pt: {
@@ -136,6 +145,7 @@ const translations = {
       deleteErrorMsg: "Não foi possível apagar a conta.",
       signOutErrorMsg: "Falha ao sair.",
       profileButton: "Perfil",
+      createGroupButton: "Criar Grupo",
     },
     profile: {
       resetPassword: "Reconfigurar senha",
@@ -151,6 +161,14 @@ const translations = {
       passwordUpdateError: "Erro ao atualizar senha",
       accountDeleted: "Conta excluída.",
       accountDeleteError: "Erro ao excluir conta",
+    },
+    createGroup: {
+      title: "Criar Novo Grupo",
+      namePlaceholder: "Nome do Grupo",
+      descriptionPlaceholder: "Descrição (opcional)",
+      privateLabel: "Grupo Privado",
+      submitButton: "Criar Grupo",
+      successMessage: "Grupo criado com sucesso!",
     },
   },
 };

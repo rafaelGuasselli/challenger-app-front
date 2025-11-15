@@ -36,6 +36,7 @@ const Home = () => {
       userName={userName}
       onPressSignOut={handleSignOutPress}
       onPressProfile={handleProfilePress}
+      onPressCriarGrupo={irParaCriarGrupo}
     />
   );
 };
