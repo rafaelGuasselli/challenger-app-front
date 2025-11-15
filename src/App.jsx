@@ -13,6 +13,8 @@ import Login from "./pages/login";
 import Cadastro from "./pages/cadastro";
 import Home from "./pages/home";
 import Profile from "./pages/profile";
+import CriarGrupo from "./pages/criarGrupo";
+import GrupoDetalhes from "./pages/GrupoDetalhesPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -57,6 +59,14 @@ function AppNavigator() {
           name="Profile"
           component={Profile}
           options={{ title: fetchI18nText("nav.profileTitle") }}
+        />
+        <Stack.Screen 
+          name="CriarGrupo" 
+          component={CriarGrupo} 
+        />
+        <Stack.Screen 
+          name="GrupoDetalhes" 
+          component={GrupoDetalhes} 
         />
       </Stack.Navigator>
     </NavigationContainer>

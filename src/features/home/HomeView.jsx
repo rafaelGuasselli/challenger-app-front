@@ -6,6 +6,7 @@ export default function HomeView({
   userName,
   onPressSignOut,
   onPressProfile,
+  onPressCriarGrupo,
 }) {
   return (
     <View style={styles.container}>
@@ -24,6 +25,17 @@ export default function HomeView({
         >
           <Text style={styles.buttonText}>{t("home.profileButton")}</Text>
         </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#4CAF50" }]}
+          onPress={onPressCriarGrupo}
+        >
+          <Text style={styles.buttonText}>
+            {t("home.createGroupButton") || "Criar Grupo"}
+          </Text>
+        </TouchableOpacity>
+        {/* ------------------------------------- */}
+        
       </View>
     </View>
   );
@@ -44,17 +56,20 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   actions: {
-    flexDirection: "row",
+    flexDirection: "column",
     gap: 12,
     marginTop: 16,
+    width: "80%",
   },
   button: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     borderRadius: 8,
+    alignItems: "center",
   },
   buttonText: {
     color: "#fff",
     fontWeight: "600",
+    fontSize: 16,
   },
 });
