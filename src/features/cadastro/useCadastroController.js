@@ -41,14 +41,12 @@ export function useCadastroController() {
       return false;
     }
 
-    // Validação de formato de email (exemplo de boa prática)
+    // Validação de formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError("Por favor, insira um e-mail válido.");
       return false;
     }
-    
-    // Outras regras podem ser adicionadas aqui (ex: força da senha)
 
     return true; // Passou na validação
   };
@@ -94,10 +92,6 @@ export function useCadastroController() {
         // Para outros erros inesperados
         setError(error.message || "Ocorreu um erro ao tentar cadastrar.");
       }
-      
-      // O 'throw' aqui é opcional, mas pode ser útil se a View
-      // precisar do objeto de erro original.
-      // throw error; 
     }
   }, [name, email, password]); // useCallback depende desses estados
 

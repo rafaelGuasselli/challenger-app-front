@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useI18n } from "../i18n"; // Assumindo que você tem isso
+import { useI18n } from "../i18n";
 import CriarGrupoView from "../features/grupo/CriarGrupoView";
 import { useCriarGrupoController } from "../features/grupo/useCriarGrupoController";
 

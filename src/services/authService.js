@@ -321,7 +321,6 @@ class AuthService {
     });
   }
 
-  /** Subscribe to centralized auth events. Returns an unsubscribe function. */
   subscribeAuth(eventOrCb, maybeCb) {
     // ... (toda a função subscribeAuth permanece igual)
     // Overload: (eventName: string, cb: Function) or (cb: Function)
@@ -360,12 +359,10 @@ class AuthService {
 const authProvider = __IS_DEV__ ? mockAuthProvider : amplifyAuthMethods;
 
 /**
- * Singleton instance of the auth service configured with Amplify or the mock provider.
  * @type {AuthService}
  */
 export const authService = new AuthService(authProvider);
 
-// Convenience named exports to keep existing imports working and provide easy access.
 /**
  * Sign in wrapper.
  * @param {{ email: string, password: string }} params
@@ -374,7 +371,6 @@ export async function loginUser({ email, password }) {
   return authService.login(email, password);
 }
 
-// Convenience named exports to keep existing imports working and provide easy access.
 /**
  * Sign in wrapper.
  *a @param {{ email: string, password: string }} params

@@ -5,7 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Switch, // Usaremos um Switch para "Privado"
+  Switch,
   ActivityIndicator,
   ScrollView,
 } from "react-native";
@@ -79,7 +79,6 @@ export default function CriarGrupoView({
   );
 }
 
-// Estilos (podem ser movidos para um arquivo separado)
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,

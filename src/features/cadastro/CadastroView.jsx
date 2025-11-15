@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
 
   errorText: {
-    color: "#D32F2F", // Um vermelho padrão
+    color: "#D32F2F",
     fontSize: 14,
     textAlign: "center",
     marginBottom: 10,
