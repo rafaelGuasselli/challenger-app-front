@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 import { Alert } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { useI18n } from "../i18n";
@@ -8,6 +9,7 @@ import { useGrupoDetalhesController } from "../features/grupo/useGrupoDetalhesCo
 export default function GrupoDetalhesPage() {
   const { t } = useI18n();
   const route = useRoute();
+  const navigation = useNavigation();
   const { groupData } = route.params;
   const groupId = groupData.id;
 

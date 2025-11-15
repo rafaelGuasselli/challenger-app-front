@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
   getUserAttributes,
   logoutUser,
@@ -7,6 +8,7 @@ import {
 } from "../../services/authService";
 
 export function useHomeController({ onUnauthenticated } = {}) {
+  const navigation = useNavigation();
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -52,5 +54,9 @@ export function useHomeController({ onUnauthenticated } = {}) {
     await deleteCurrentUser();
   }, []);
 
-  return { userName, loading, signOut, deleteAccount };
+  const handleCreateGroup = useCallback(() => {
+    navigation.navigate("CriarGrupo");
+  }, [navigation]);
+
+  return { userName, loading, signOut, deleteAccount, handleCreateGroup };
 }

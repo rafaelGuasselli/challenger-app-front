@@ -28,7 +28,7 @@ export function useGrupoDetalhesController(groupId) {
       setIsDeleting(false);
       
       // 2. Sucesso: Retorna para a lista de grupos
-      navigation.navigate("ListaDeGrupos"); // Ou sua tela 'Home'
+      navigation.navigate("Home");
       
       return true;
       
