@@ -8,21 +8,21 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator, // <<< Importa para feedback de carregamento
+  ActivityIndicator,
 } from "react-native";
 
-// Adicionadas as props 'isLoading' e 'onNavigateLogin'
 export default function CadastroView({
   t,
   name,
   email,
   password,
-  isLoading, // <<< Prop para controlar o estado de carregamento
+  isLoading,
+  error,
   onChangeName,
   onChangeEmail,
   onChangePassword,
   onSubmit,
-  onNavigateLogin, // <<< Prop para o link de voltar ao login
+  onNavigateLogin,
 }) {
   return (
     <KeyboardAvoidingView
@@ -42,7 +42,7 @@ export default function CadastroView({
             onChangeText={onChangeName}
             autoCapitalize="words"
             returnKeyType="next"
-            editable={!isLoading} // Desabilita edição enquanto carrega
+            editable={!isLoading}
           />
           <TextInput
             style={styles.input}
@@ -64,17 +64,26 @@ export default function CadastroView({
             editable={!isLoading}
           />
 
-          {/* Renderização condicional: mostra loading ou o botão */}
+          {/* 2. EXIBE MENSAGEM DE ERRO (SE ELA EXISTIR) */}
+          {error && <Text style={styles.errorText}>{error}</Text>}
+
           {isLoading ? (
-            <ActivityIndicator size="large" color="#1976d2" style={styles.button} />
+            <ActivityIndicator
+              size="large"
+              color="#1976d2"
+              style={styles.button}
+            />
           ) : (
             <TouchableOpacity style={styles.button} onPress={onSubmit}>
               <Text style={styles.buttonText}>{t("register.submitButton")}</Text>
             </TouchableOpacity>
           )}
 
-          {/* Adicionado link/botão para voltar ao Login */}
-          <TouchableOpacity style={styles.loginLink} onPress={onNavigateLogin} disabled={isLoading}>
+          <TouchableOpacity
+            style={styles.loginLink}
+            onPress={onNavigateLogin}
+            disabled={isLoading}
+          >
             <Text style={styles.loginLinkText}>{t("register.loginLink")}</Text>
           </TouchableOpacity>
         </View>
@@ -104,9 +113,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
-    paddingHorizontal: 16, // Aumentado
-    paddingVertical: 12, // Aumentado
-    marginVertical: 8, // Aumentado
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginVertical: 8,
     backgroundColor: "#fff",
     fontSize: 16,
   },
@@ -114,17 +123,16 @@ const styles = StyleSheet.create({
     marginTop: 16,
     backgroundColor: "#1976d2",
     borderRadius: 8,
-    paddingVertical: 14, // Aumentado
+    paddingVertical: 14,
     alignItems: "center",
-    justifyContent: "center", // Para o ActivityIndicator
-    minHeight: 50, // Altura mínima para consistência
+    justifyContent: "center",
+    minHeight: 50,
   },
   buttonText: {
     color: "#fff",
     fontWeight: "600",
     fontSize: 16,
   },
-  // Estilos para o novo link de login
   loginLink: {
     marginTop: 20,
     alignItems: "center",
@@ -132,5 +140,12 @@ const styles = StyleSheet.create({
   loginLinkText: {
     color: "#1976d2",
     fontSize: 14,
+  },
+
+  errorText: {
+    color: "#D32F2F", // Um vermelho padrão
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 10,
   },
 });

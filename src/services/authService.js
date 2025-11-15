@@ -34,6 +34,7 @@ const SENSITIVE_KEYS = new Set([
 ]);
 
 function sanitizeForLog(value, depth = 0) {
+  // ... (toda a função sanitizeForLog permanece igual)
   if (!__IS_DEV__) return undefined;
   if (value == null) return value;
   if (depth > 3) return "[Object]";
@@ -61,17 +62,17 @@ function sanitizeForLog(value, depth = 0) {
   }
   return String(value);
 }
+
 /**
  * @typedef {Object} AuthProvider
- * @property {(args: { username: string, password: string, options?: { authFlowType?: string } }) => Promise<any>} signIn - Sign in with username and password.
- * @property {() => Promise<any>} signOut - Sign out the current user.
- * @property {(args: { username: string, password: string, options?: { userAttributes?: Record<string, any> } }) => Promise<any>} signUp - Register a new user.
+ // ... (todo o JSDoc da AuthProvider permanece igual)
  */
 
 /**
  * Authentication service that wraps the underlying provider (e.g., AWS Amplify Auth).
  */
 class AuthService {
+  // ... (TODA a classe AuthService com os métodos login, logout, register, etc., permanece 100% igual)
   /**
    * @param {AuthProvider} provider Authentication provider compatible with Amplify.
    */
@@ -147,7 +148,7 @@ class AuthService {
           "register succeeded for",
           username,
           "result:",
-          sanitizeForLog(res),
+          sanitizeForLog(res)
         );
         return res;
       })
@@ -292,6 +293,7 @@ class AuthService {
 
   /** Initialize a single global Amplify Hub listener for auth events. */
   initAuthListeners() {
+    // ... (toda a função initAuthListeners permanece igual)
     if (this._hubUnsubscribe) return; // already initialized
     devLog("Initializing Hub auth listener");
     this._hubUnsubscribe = Hub.listen("auth", ({ payload }) => {
@@ -321,6 +323,7 @@ class AuthService {
 
   /** Subscribe to centralized auth events. Returns an unsubscribe function. */
   subscribeAuth(eventOrCb, maybeCb) {
+    // ... (toda a função subscribeAuth permanece igual)
     // Overload: (eventName: string, cb: Function) or (cb: Function)
     if (typeof eventOrCb === "string" && typeof maybeCb === "function") {
       const eventName = eventOrCb;
@@ -374,18 +377,10 @@ export async function loginUser({ email, password }) {
 // Convenience named exports to keep existing imports working and provide easy access.
 /**
  * Sign in wrapper.
- * @param {{ email: string, password: string }} params
+ *a @param {{ email: string, password: string }} params
  */
 export async function logoutUser() {
   return authService.logout();
-}
-
-/**
- * Sign up wrapper.
- * @param {{ name?: string, email: string, password: string }} params
- */
-export async function registerUser({ name, email, password }) {
-  return authService.register(email, password, { email, name });
 }
 
 /**
@@ -414,4 +409,20 @@ export async function getUserAttributes() {
  */
 export async function deleteCurrentUser() {
   return authService.deleteCurrentUser();
+}
+
+// ========================================================================
+// CORREÇÃO DE NOMENCLATURA:
+// Esta é a função que o useCadastroController deve importar e usar.
+// ========================================================================
+
+/**
+ * Sign up wrapper.
+ * @param {{ name?: string, email: string, password: string }} params
+ */
+export async function signUp({ name, email, password }) {
+  // O 'authService.register' é o método da *classe* interna, que por sua vez
+  // já chama o 'this.provider.signUp' do Amplify. Está correto.
+  // A mudança é apenas no nome da função que o controller chama.
+  return authService.register(email, password, { email, name });
 }
