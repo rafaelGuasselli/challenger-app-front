@@ -4,31 +4,39 @@
     "slug": "mychallengers-app",
     "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./src/assets/icon512.png",
+    "icon": "./assets/icon512.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./src/assets/icon512.png",
+      "image": "./assets/icon512.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "icon": "./src/assets/icon512.png",
+      "icon": "./assets/icon512.png",
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.mychallengersapp"
+      "bundleIdentifier": "com.challengers.app"
     },
     "android": {
-      "icon": "./src/assets/icon512.png",
+      "icon": "./assets/icon512.png",
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/icon512.png",
+        "foregroundImage": "./assets/icon512.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.mychallengersapp"
+      "package": "com.challengers.app"
     },
     "web": {
-      "favicon": "./src/assets/favicon.png"
+      "favicon": "./assets/favicon.png"
     },
-    "plugins": []
+    "plugins": [],
+    "assetBundlePatterns": [
+      "./assets/*"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e113816a-9bca-4fbe-84ad-8a0506fd3a6b"
+      }
+    }
   }
 }
