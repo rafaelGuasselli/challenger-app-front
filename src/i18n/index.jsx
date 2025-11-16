@@ -85,6 +85,13 @@ const translations = {
       submitButton: "Create Group",
       successMessage: "Group created successfully!",
     },
+    deleteGroup: {
+      confirmTitle: "Delete Group",
+      confirmMessage: "Are you sure you want to delete this group? This action cannot be undone.",
+      dangerZoneTitle: "Danger Zone",
+      deleteButton: "Delete Group",
+      deleteWarning: "This action is permanent.",
+    },
   },
   pt: {
     appName: "Challengers App",
@@ -169,6 +176,13 @@ const translations = {
       privateLabel: "Grupo Privado",
       submitButton: "Criar Grupo",
       successMessage: "Grupo criado com sucesso!",
+    },
+    deleteGroup: {
+      confirmTitle: "Deletar Grupo",
+      confirmMessage: "Tem certeza que deseja deletar este grupo? Esta ação não pode ser desfeita.",
+      dangerZoneTitle: "Zona de Perigo",
+      deleteButton: "Deletar Grupo",
+      deleteWarning: "Esta ação é permanente.",
     },
   },
 };

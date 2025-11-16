@@ -63,10 +63,12 @@ function AppNavigator() {
         <Stack.Screen 
           name="CriarGrupo" 
           component={CriarGrupo} 
+          options={{ title: fetchI18nText("createGroup.title") }}
         />
         <Stack.Screen 
           name="GrupoDetalhes" 
           component={GrupoDetalhes} 
+          options={{ title: fetchI18nText("nav.groupDetailsTitle") }}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -77,7 +79,6 @@ export default function App() {
   // Initialize centralized auth listener once
   useEffect(() => {
     authService.initAuthListeners();
-    // Complete OAuth redirect flows on web (no-op on native if unsupported)
     authService.completeOAuthFlowIfPresent?.();
   }, []);
   return (

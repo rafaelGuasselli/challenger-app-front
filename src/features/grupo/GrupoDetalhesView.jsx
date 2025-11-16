@@ -15,6 +15,7 @@ export default function GrupoDetalhesView({
   deleteError, // Estado de erro do "delete"
   onDeletePress, // Função chamada ao pressionar "Deletar"
 }) {
+  // O groupData é passado da página 'criarGrupo', então ele deve existir
   const nomeGrupo = groupData ? groupData.nome : "Carregando...";
   const descricaoGrupo = groupData ? groupData.descricao : "...";
 
@@ -31,19 +32,15 @@ export default function GrupoDetalhesView({
           {t("deleteGroup.dangerZoneTitle") || "Zona de Perigo"}
         </Text>
         
-        {/* Exibe o erro de deleção, se houver */}
         {deleteError && <Text style={styles.errorText}>{deleteError}</Text>}
 
-        {/* Botão de Deletar */}
         {isDeleting ? (
-          // Mostra um spinner se estiver deletando
           <ActivityIndicator
             size="large"
             color="#D32F2F"
             style={styles.deleteButton}
           />
         ) : (
-          // Botão normal
           <TouchableOpacity 
             style={styles.deleteButton} 
             onPress={onDeletePress}
@@ -87,7 +84,7 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: "#D32F2F",
+    borderColor: "#D32F2F", // Vermelho
     borderRadius: 8,
   },
   dangerTitle: {
@@ -98,7 +95,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   deleteButton: {
-    backgroundColor: "#D32F2F",
+    backgroundColor: "#D32F2F", // Vermelho
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: "center",
