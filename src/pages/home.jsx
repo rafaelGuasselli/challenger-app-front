@@ -8,7 +8,12 @@ import { useHomeController } from "../features/home/useHomeController";
 const Home = () => {
   const navigation = useNavigation();
   const { fetchI18nText: t } = useI18n();
-  const { userName, signOut } = useHomeController({
+  const { 
+    userName, 
+    signOut, 
+    challenges, 
+    handleCompleteChallenge 
+  } = useHomeController({
     onUnauthenticated: () =>
       navigation.reset({ index: 0, routes: [{ name: "Login" }] }),
   });
@@ -37,6 +42,8 @@ const Home = () => {
       onPressSignOut={handleSignOutPress}
       onPressProfile={handleProfilePress}
       onPressCriarGrupo={irParaCriarGrupo}
+      challenges={challenges} // NOVO: Passa a lista para a View
+      onCompleteChallenge={handleCompleteChallenge} // NOVO: Passa a função para a View
     />
   );
 };
