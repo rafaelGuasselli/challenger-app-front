@@ -1,122 +1,127 @@
 import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  ScrollView,
-} from "react-native";
+import { View, Text, Button, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 
+// Recebemos 't' via props agora
 export default function GrupoDetalhesView({
-  t, // Para traduções
-  groupData, // Os dados do grupo (ex: { nome: "...", descricao: "..." })
-  isDeleting, // Estado de loading do "delete"
-  deleteError, // Estado de erro do "delete"
-  onDeletePress, // Função chamada ao pressionar "Deletar"
+  t, 
+  groupData,
+  isDeleting,
+  deleteError,
+  onDeletePress,
 }) {
-  // O groupData é passado da página 'criarGrupo', então ele deve existir
-  const nomeGrupo = groupData ? groupData.nome : "Carregando...";
-  const descricaoGrupo = groupData ? groupData.descricao : "...";
+  // CRITICAL FIX: Se 't' não vier por algum motivo bizarro, usamos um fallback seguro
+  // Isso impede o erro "t is not a function" para sempre.
+  const translate = typeof t === 'function' ? t : (key) => key;
+
+  if (!groupData) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{nomeGrupo}</Text>
-        <Text style={styles.description}>{descricaoGrupo}</Text>
-      </View>
+      <View style={styles.card}>
+        {/* Título */}
+        <Text style={styles.title}>{groupData.nome}</Text>
 
-      {/* --- Seção de Perigo (Deletar) --- */}
-      <View style={styles.dangerZone}>
-        <Text style={styles.dangerTitle}>
-          {t("deleteGroup.dangerZoneTitle") || "Zona de Perigo"}
-        </Text>
-        
-        {deleteError && <Text style={styles.errorText}>{deleteError}</Text>}
+        {/* Descrição */}
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>
+            {translate("group.description") || "Descrição"}:
+          </Text>
+          <Text style={styles.value}>
+            {groupData.descricao || translate("common.noDescription") || "Sem descrição"}
+          </Text>
+        </View>
 
-        {isDeleting ? (
-          <ActivityIndicator
-            size="large"
-            color="#D32F2F"
-            style={styles.deleteButton}
-          />
-        ) : (
-          <TouchableOpacity 
-            style={styles.deleteButton} 
+        {/* Privacidade */}
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>
+            {translate("group.privacy") || "Privacidade"}:
+          </Text>
+          <Text style={styles.value}>
+            {groupData.isPrivado
+              ? translate("group.private") || "Privado"
+              : translate("group.public") || "Público"}
+          </Text>
+        </View>
+
+        {/* Erro de Deleção */}
+        {deleteError ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{deleteError}</Text>
+          </View>
+        ) : null}
+
+        {/* Botão */}
+        <View style={styles.buttonContainer}>
+          <Button
+            title={isDeleting ? (translate("common.deleting") || "Deletando...") : (translate("common.delete") || "Deletar Grupo")}
             onPress={onDeletePress}
-          >
-            <Text style={styles.deleteButtonText}>
-              {t("deleteGroup.deleteButton") || "Deletar Grupo"}
-            </Text>
-          </TouchableOpacity>
-        )}
-        <Text style={styles.dangerWarning}>
-          {t("deleteGroup.deleteWarning") || "Esta ação é permanente."}
-        </Text>
+            color="#d32f2f"
+            disabled={isDeleting}
+          />
+        </View>
       </View>
     </ScrollView>
   );
 }
 
-// Estilos
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 24,
+    padding: 16,
     backgroundColor: "#f5f5f5",
   },
-  header: {
-    marginBottom: 24,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    padding: 20,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "700",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
     textAlign: "center",
-    marginBottom: 8,
+    color: "#333",
   },
-  description: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#555",
+  infoRow: {
+    marginBottom: 15,
   },
-  dangerZone: {
-    marginTop: 40,
-    padding: 16,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#D32F2F", // Vermelho
-    borderRadius: 8,
-  },
-  dangerTitle: {
-    fontSize: 18,
+  label: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 4,
     fontWeight: "600",
-    color: "#D32F2F",
-    textAlign: "center",
-    marginBottom: 16,
   },
-  deleteButton: {
-    backgroundColor: "#D32F2F", // Vermelho
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 50,
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontWeight: "600",
+  value: {
     fontSize: 16,
+    color: "#333",
   },
-  dangerWarning: {
-    textAlign: "center",
-    color: "#555",
-    fontSize: 12,
-    marginTop: 8,
+  buttonContainer: {
+    marginTop: 30,
+  },
+  errorContainer: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: "#ffebee",
+    borderRadius: 4,
   },
   errorText: {
-    color: "#D32F2F",
-    fontSize: 14,
+    color: "#d32f2f",
     textAlign: "center",
-    marginBottom: 10,
   },
 });

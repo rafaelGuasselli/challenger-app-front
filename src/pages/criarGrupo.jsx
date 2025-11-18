@@ -23,21 +23,25 @@ export default function CriarGrupoPage() {
   } = useCriarGrupoController();
 
   // 2. Handler de submissão da página
+// 2. Handler de submissão da página
   const handleViewSubmit = async () => {
     // Chama o handler do controller
     const newGroup = await handleSubmit();
 
-    // Se o controller retornar o novo grupo, deu sucesso
-    if (newGroup) {
+    // Verificamos se newGroup existe E se ele tem um ID válido
+    if (newGroup && newGroup.id) {
       Alert.alert(
         t("common.successTitle") || "Sucesso",
         t("createGroup.successMessage") || "Grupo criado com sucesso!"
       );
-      // Navega para a página do novo grupo
+      // Só navega se tivermos certeza que o ID existe
       navigation.navigate("GrupoDetalhes", { groupData: newGroup });
+      
+    } else if (newGroup) {
+      // Caso raro: O grupo foi criado (newGroup existe), mas veio sem ID
+      Alert.alert("Atenção", "Grupo criado, mas não foi possível carregar os detalhes.");
     }
-    // Se der erro, o 'error' state será atualizado pelo hook
-    // e a View irá exibi-lo automaticamente.
+    // Se newGroup for undefined (erro no controller), não fazemos nada pois o controller já exibiu a msg de erro na tela.
   };
 
   // 3. Renderiza a View, passando as props
