@@ -50,6 +50,14 @@ export default function GrupoDetalhesPage() {
       ]
     );
   };
+  
+  // FUNÇÃO PARA ADICIONAR NOVO MEMBRO
+  const handleInviteMember = () => {
+    navigation.navigate("InviteMemberScreen", { 
+      challengeId: groupData.id,
+      challengeName: groupData.name || 'Desafio' 
+    });
+  };
 
   // 2. Passamos o 't' (e uma função de fallback caso ele falhe) para a View
   // A prop 't' é passada explicitamente aqui
@@ -60,6 +68,8 @@ export default function GrupoDetalhesPage() {
       isDeleting={isDeleting}
       deleteError={deleteError}
       onDeletePress={handleConfirmDelete}
+      //botão de convite
+      onInviteMemberPress={handleInviteMember}
     />
   );
 }
